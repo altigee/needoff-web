@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-import { Input, Button } from 'antd';
+import { Button } from 'antd';
+import InputForm from './../../../components/inputForm/InputForm';
 import history from '../../router/history';
 import AuthLayout from '../../auth-layout/AuthLayout';
 import { Form, Field } from 'react-final-form';
@@ -10,63 +11,13 @@ import { request } from "graphql-request";
 import './../styles.scss';
 import 'antd/dist/antd.css';
 
-/*
-const query = `
-  query {
-    Lift(id: "panorama") {
-      name
-      status
-    }
-  }
-`;
-
-request("https://snowtooth.moonhighway.com/graphql", query)
-  .then(console.log)
-  .catch(console.error);
- */ 
-
-var query = `mutation {
-  login(email: "okyrienko@gmail.com", password:"12345") {
-    accessToken
-    refreshToken
-  }
-}`;
-
-// const url = "http://nmarchuk.pythonanywhere.com/graphql";
-request("http://nmarchuk.pythonanywhere.com/graphql", query)
-  .then(console.log)
-  .catch(console.error);
-
-
 const focusOnError = createDecorator();
-
-const InputForm = ({ input, meta, ...rest }) => (
-  <>
-    <Input
-      {...input}
-      {...rest}
-    />
-    <div className='auth-error-text'>
-      {meta.error && meta.touched && <span>{meta.error}</span>}
-    </div>
-  </>
-)
 
 export default class Signup extends Component {
 
-  onSubmit = (values) => {
-    console.log('OnSubmit');
-    alert(values);
-    return;
-  }
-
-  handleSubmit = async () => {
+  onSubmit = async () => {
     console.log('submit');
-    /*  const [err] = await 
-      if (!err) {
-        history.push('/auth/login');
-      }
-      */
+
     }
 
   render() {
@@ -74,7 +25,7 @@ export default class Signup extends Component {
       <AuthLayout>
         <div className="auth-wrap">
           <Form 
-            onSubmit={this.handleSubmit}
+            onSubmit={this.onSubmit}
             decorators={[focusOnError]}
             validate={values => {
               const errors = {};

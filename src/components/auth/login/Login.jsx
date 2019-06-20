@@ -1,31 +1,23 @@
 import React, { Component } from 'react';
 
-import { Input, Button } from 'antd';
+import { Button } from 'antd';
+import InputForm from './../../../components/inputForm/InputForm';
 
 import AuthLayout from '../../auth-layout/AuthLayout';
 import history from '../../router/history';
 import { Form, Field } from 'react-final-form';
+import createDecorator from 'final-form-focus';
+import { request } from 'graphql-request';
+import authService from './../../authService/authService';
 
 import './../styles.scss';
 import 'antd/dist/antd.css'; 
 
-const InputForm = ({ input, meta, ...rest }) => (
-  <>
-    <Input
-      {...input}
-      {...rest}
-    />
-    <div className='auth-error-text'>
-      {meta.error && meta.touched && <span>{meta.error}</span>}
-    </div>
-  </>
-)
+const focusOnError = createDecorator();
 
 export default class Login extends Component {
 
-  onSubmit = async () => {
-
-  }
+ onSubmit = authService.login;
 
   render() {
     return (
@@ -33,6 +25,7 @@ export default class Login extends Component {
         <div className="auth-wrap">
           <Form 
             onSubmit={this.onSubmit}
+            decorators={[focusOnError]}
             validate={values => {
               const errors = {};
               if (!values.login) {
