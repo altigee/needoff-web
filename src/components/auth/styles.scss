@@ -1,0 +1,27 @@
+.auth-wrap {
+  border: 1px solid #bbb;
+  background-color: #eee;
+  padding: 24px;
+  width: 320px;
+  height: 450px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &-input {
+    margin-bottom: 16px;
+  }
+
+  &-button {
+    margin-top: auto;
+    padding-top: 16px;
+    text-align: right;
+  }
+
+  .auth-error-text {
+    color: red;
+  }
+}
