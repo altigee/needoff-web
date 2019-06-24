@@ -17,7 +17,7 @@ export default class Routes extends Component {
   renderAuthedRoutes = () => {
       return (
           <Switch>
-            <Route exact path="/dashboard" component={Dashboard} />
+            <Route path="/dashboard" component={Dashboard} />
             <Redirect to="/dashboard" />
           </Switch>
       );

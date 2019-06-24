@@ -1,6 +1,8 @@
 import history from './../router/history';
 import { request } from 'graphql-request';
 
+export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
+
 class AuthService {
 
   status = false;
@@ -14,16 +16,45 @@ class AuthService {
       }
     }`;
 
-    await request("http://nmarchuk.pythonanywhere.com/graphql", mutation)
+    await request(endpoint, mutation)
       .then(data => {
-        console.log(data.login);
+        console.log(data);
         this.status = true;
         localStorage.setItem("token", data.login.accessToken);
+        localStorage.setItem("email", values.login);
         history.push('/dashboard');
         })
       .catch(error => {
         console.log(error);
         history.push('/auth/login');
+      });
+  }
+
+  register = async (values) => {
+    console.log(values);
+    const mutation = `mutation register {
+      register(
+        email: "${values.login}", 
+        password:"${values.password}", 
+        userData: { 
+          firstName: "${values.firstName}",
+          lastName: "${values.lastName}",
+        }
+      ) {
+          userId
+          accessToken
+          refreshToken
+        }
+    }`;
+
+    await request(endpoint, mutation)
+      .then(data => {
+        console.log(data);
+        history.push('/auth/login');
+        })
+      .catch(error => {
+        console.log(error);
+        history.push('/auth/signup');
       });
   }
 
@@ -33,11 +64,11 @@ class AuthService {
 
   logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("currentWS");
     this.status = false;
     history.push('/auth/login');
   }
-  
-
 }
 
 export default new AuthService();

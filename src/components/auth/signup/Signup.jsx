@@ -6,7 +6,8 @@ import history from '../../router/history';
 import AuthLayout from '../../auth-layout/AuthLayout';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
-import { request } from "graphql-request";
+// import { request } from "graphql-request";
+import authService from './../../authService/authService';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
@@ -15,10 +16,7 @@ const focusOnError = createDecorator();
 
 export default class Signup extends Component {
 
-  onSubmit = async () => {
-    console.log('submit');
-
-    }
+  onSubmit = authService.register;
 
   render() {
     return (
@@ -68,7 +66,7 @@ export default class Signup extends Component {
                   <Field 
                     name="login"
                     component={InputForm}
-                    placeholder="Enter your login"
+                    placeholder="login"
                   />
                 </div>
                 <div className='auth-wrap-input'>
@@ -76,7 +74,7 @@ export default class Signup extends Component {
                   <Field 
                     name="password"
                     component={InputForm}
-                    placeholder="Enter your password"
+                    placeholder="password"
                   />  
                 </div>
                 <div className="auth-wrap-button">
