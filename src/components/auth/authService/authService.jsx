@@ -16,19 +16,17 @@ class AuthService {
         refreshToken
       }
     }`;
-
-    await request(endpoint, mutation)
-      .then(data => {
-        console.log(data);
-        this.status = true;
-        localStorage.setItem("token", data.login.accessToken);
-        localStorage.setItem("email", values.login);
-        history.push('/dashboard');
-        })
-      .catch(error => {
-        console.log(error);
+    try {
+      const data = await request(endpoint, mutation);
+      this.status = true;
+      localStorage.setItem("token", data.login.accessToken);
+      localStorage.setItem("email", values.login);
+      history.push('/dashboard');
+    }
+    catch (error) {
+      console.log(error);
         history.push('/auth/login');
-      });
+    }
   }
 
   register = async (values) => {
@@ -47,19 +45,18 @@ class AuthService {
           refreshToken
         }
     }`;
-
-    await request(endpoint, mutation)
-      .then(data => {
-        console.log(data);
-        this.status = true;
-        localStorage.setItem("token", data.register.accessToken);
-        localStorage.setItem("email", values.login);
-        history.push('/dashboard');
-        })
-      .catch(error => {
-        console.log(error);
-        history.push('/auth/signup');
-      });
+    try {
+      const data = await request(endpoint, mutation);
+      console.log(data);
+      this.status = true;
+      localStorage.setItem("token", data.register.accessToken);
+      localStorage.setItem("email", values.login);
+      history.push('/dashboard');
+    }
+    catch(error) {
+      console.log(error);
+      history.push('/auth/signup');
+    };
   }
 
   getStatus = () => {
