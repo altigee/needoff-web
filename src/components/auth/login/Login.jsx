@@ -7,7 +7,6 @@ import AuthLayout from '../../auth-layout/AuthLayout';
 import history from '../../router/history';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
-// import { request } from 'graphql-request';
 import authService from './../../authService/authService';
 
 import './../styles.scss';

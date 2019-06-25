@@ -6,7 +6,6 @@ import history from '../../router/history';
 import AuthLayout from '../../auth-layout/AuthLayout';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
-// import { request } from "graphql-request";
 import authService from './../../authService/authService';
 
 import './../styles.scss';
@@ -78,7 +77,7 @@ export default class Signup extends Component {
                   />  
                 </div>
                 <div className="auth-wrap-button">
-                  <Button htmlType="submit">Sign up</Button>
+                  <Button htmlType="submit">Create Account</Button>
                   <Button 
                     type="link"
                     onClick={() => history.push('/auth/login')}

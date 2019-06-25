@@ -2,6 +2,7 @@ import history from './../router/history';
 import { request } from 'graphql-request';
 
 export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
+// export const endpoint = "http://localhost:3344/graphql";
 
 class AuthService {
 
@@ -50,7 +51,11 @@ class AuthService {
     await request(endpoint, mutation)
       .then(data => {
         console.log(data);
-        history.push('/auth/login');
+        this.status = true;
+        localStorage.setItem("token", data.register.accessToken);
+        localStorage.setItem("email", values.login);
+        history.push('/dashboard');
+        // history.push('/auth/login');
         })
       .catch(error => {
         console.log(error);

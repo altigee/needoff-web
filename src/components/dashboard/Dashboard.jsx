@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { find } from 'lodash';
 import { Route, Switch } from 'react-router-dom';
 import { Button, Modal, Spin, Select } from 'antd';
 import authService from './../authService/authService';
-import profileService from './../profileService/profileService'
+import profileService from './../profileService/profileService';
 import WorkSpace from './WorkSpace/WorkSpace'
 import InputForm from './../inputForm/InputForm';
 import { Form, Field } from 'react-final-form';
@@ -31,22 +32,25 @@ const Dashboard = (props) => {
 
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(true);
-  const [amountWS, setAmountWS] = useState(0);
   const [workspaces, setWorkspaces] = useState(null);
+  const [ws, setWs] = useState(null);
 
   useEffect(() => { 
     (async() => {
       const workspaces = await profileService.getMyWorkspaces();
       setWorkspaces(workspaces);
       console.log(workspaces);
-      setAmountWS(workspaces.length);
-      setLoading(false);
-      if (amountWS === 1) {
+      if (workspaces.length === 1) {
         localStorage.setItem("currentWS", profileService.workspaces[0].name);
+        setWs(workspaces[0]);
         history.push(`/dashboard/${localStorage.getItem("currentWS")}`);
       }
+      if (localStorage.getItem("currentWS")) {
+        setWs(find(workspaces, { 'name': localStorage.getItem("currentWS") }));
+      }
+      setLoading(false);
     })();
-  }, [amountWS, visible]);
+  }, [visible]);
 
   const onSubmit = async (data) => {
     await profileService.createWorkspaces(data);
@@ -56,6 +60,7 @@ const Dashboard = (props) => {
   const onSubmitSelectWS = async (data) => {
     console.log(data);
     localStorage.setItem("currentWS", data.team);
+    setWs(find(workspaces, { 'name': data.team }));
     history.push(`/dashboard/${localStorage.getItem("currentWS")}`);
     setVisible(false);
   } 
@@ -63,7 +68,7 @@ const Dashboard = (props) => {
   const createWS = () => {
     return (
       <Modal
-          title="Enter your Team"
+          title="Add your Workspace"
           visible={visible}
           footer={null}
       >
@@ -82,11 +87,25 @@ const Dashboard = (props) => {
             {handleSubmit}) => (
             <form onSubmit={handleSubmit}>
               <div>
-                <Field 
-                  name="team"
-                  component={InputForm}
-                  placeholder="Enter your team"
-                />
+                <div>
+                  <label>Name</label>
+                  <Field 
+                    name="team"
+                    component={InputForm}
+                    placeholder="name"
+                  />
+                  <br />
+                </div>
+                <div>
+                  <label>Description</label>
+                  <Field 
+                    name="description"
+                    component={InputForm}
+                    placeholder="description"
+                  />
+                </div>  
+                <br />
+                <br />
                 <Button type="primary" htmlType="submit">Ok</Button>
               </div>
             </form>
@@ -99,7 +118,7 @@ const Dashboard = (props) => {
   const showDashboard = () => {
     return (
       <>
-        { !localStorage.getItem("currentWS") && amountWS > 1 ? selectWS(): showCurrentWS() }
+        { !localStorage.getItem("currentWS") && workspaces.length > 1 ? selectWS(): showCurrentWS() }
         <Button onClick={authService.logout}>Log out</Button>
       </>
     )
@@ -109,7 +128,7 @@ const Dashboard = (props) => {
     return (
       <>
         <Modal
-          title="Choose your Team"
+          title="Choose your WS"
           visible={visible}
           footer={null}
         >
@@ -143,18 +162,16 @@ const Dashboard = (props) => {
     return (
       <>
         <Switch>
-          <Route path="/dashboard/:currentWS" component={WorkSpace} />
+          <Route path="/dashboard/:currentWS" render={ (props) => <WorkSpace ws={ws} {...props}/>} />
       </Switch>
       </>
     )
   }
 
   if (loading) return <Spin />
-  console.log(amountWS);
-  console.log(workspaces);
     return (
       <>
-       { !amountWS  ? createWS() : showDashboard()}
+       { !workspaces.length  ? createWS() : showDashboard()}
       </>
     ) 
 }  
