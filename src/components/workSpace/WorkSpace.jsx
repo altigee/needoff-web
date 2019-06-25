@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import profileService from './../../profileService/profileService';
+import profileService from './../profileService/profileService';
 import { Spin } from 'antd';
 
 import 'antd/dist/antd.css'; 

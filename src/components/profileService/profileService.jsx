@@ -1,5 +1,4 @@
-import history from './../router/history';
-import { request, GraphQLClient } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 
 export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
 //export const endpoint = "http://localhost:3344/graphql";
@@ -7,7 +6,6 @@ export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
 class profileService {
 
   workspaces = null;
-  id = null;
 
   getMyWorkspaces = async () => {
     const query = `
@@ -26,14 +24,11 @@ class profileService {
       },
     })
 
-    const ws = await graphQLClient.request(query)
+    return graphQLClient.request(query)
     .then(data => {
-      console.log(data);
       this.workspaces = data.myWorkspaces;
       return this.workspaces;
     });
-
-    return ws;
   }
 
   createWorkspaces = async (values) => {
@@ -51,13 +46,11 @@ class profileService {
       },
     })
 
-    const ws = await graphQLClient.request(query)
+    return graphQLClient.request(query)
     .then(data => {
       console.log(data);
       return data;
     });
-
-    return ws;
   }  
 
     getMyLeaves = async (ws) => {
@@ -82,12 +75,10 @@ class profileService {
       },
     })
 
-    const leaves = await graphQLClient.request(query)
+    return graphQLClient.request(query)
     .then(data => {
       return data;
     });
-
-    return leaves;
   }
 
   getUserId = async (ws) => {
@@ -104,13 +95,11 @@ class profileService {
       },
     })
 
-    const id = await graphQLClient.request(query)
+    return graphQLClient.request(query)
     .then(data => {
       console.log(data);
       return data;
     });
-
-    return id;
   }  
 
 }  
