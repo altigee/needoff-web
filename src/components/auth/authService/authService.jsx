@@ -55,7 +55,6 @@ class AuthService {
         localStorage.setItem("token", data.register.accessToken);
         localStorage.setItem("email", values.login);
         history.push('/dashboard');
-        // history.push('/auth/login');
         })
       .catch(error => {
         console.log(error);

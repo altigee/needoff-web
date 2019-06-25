@@ -10,7 +10,6 @@ const InputForm = ({ input, meta, ...rest }) => (
     <Input
       {...input}
       {...rest}
-      // autoComplete='off'
     />
     <div className='input-form-error'>
       {meta.error && meta.touched && <span>{meta.error}</span>}

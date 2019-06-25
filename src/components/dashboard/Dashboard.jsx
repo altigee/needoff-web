@@ -47,8 +47,6 @@ const Dashboard = (props) => {
   const onSubmitSelectWS = async (data) => {
     console.log(data);
     localStorage.setItem("currentWS", data.team);
-    // setWs(find(workspaces, { 'name': data.team }));
-    // history.push(`/dashboard/${localStorage.getItem("currentWS")}`);
     setVisible(false);
   } 
 

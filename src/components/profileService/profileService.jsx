@@ -17,18 +17,14 @@ class profileService {
       }
     }
     `;
-
     const graphQLClient = new GraphQLClient(endpoint, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-
-    return graphQLClient.request(query)
-    .then(data => {
-      this.workspaces = data.myWorkspaces;
-      return this.workspaces;
-    });
+    const workspaces = await graphQLClient.request(query);
+    this.workspaces = workspaces.myWorkspaces;
+    return this.workspaces;
   }
 
   createWorkspaces = async (values) => {
@@ -39,22 +35,15 @@ class profileService {
       }
     }
     `;
-
     const graphQLClient = new GraphQLClient(endpoint, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-
-    return graphQLClient.request(query)
-    .then(data => {
-      console.log(data);
-      return data;
-    });
+    return await graphQLClient.request(query);
   }  
 
-    getMyLeaves = async (ws) => {
-
+  getMyLeaves = async (ws) => {
     const query = `
     query {
       myLeaves(workspaceId: ${ws}) {
@@ -68,38 +57,26 @@ class profileService {
       }
     }
     `;
-
     const graphQLClient = new GraphQLClient(endpoint, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-
-    return graphQLClient.request(query)
-    .then(data => {
-      return data;
-    });
+    return await graphQLClient.request(query);
   }
 
   getUserId = async (ws) => {
-
     const query = `
     query Profile {
       profile{userId}
     }
     `;
-
     const graphQLClient = new GraphQLClient(endpoint, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-
-    return graphQLClient.request(query)
-    .then(data => {
-      console.log(data);
-      return data;
-    });
+    return await graphQLClient.request(query);
   }  
 
 }  
