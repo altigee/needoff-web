@@ -3,11 +3,11 @@ import React, { Component } from 'react';
 import { Button } from 'antd';
 import InputForm from './../../../components/inputForm/InputForm';
 
-import AuthLayout from '../../auth-layout/AuthLayout';
+import AuthLayout from '../../auth/authLayout/AuthLayout';
 import history from '../../router/history';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
-import authService from './../../authService/authService';
+import authService from './../../auth/authService/authService';
 
 import './../styles.scss';
 import 'antd/dist/antd.css'; 

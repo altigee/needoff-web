@@ -1,11 +1,12 @@
 import { GraphQLClient } from 'graphql-request';
 
-export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
-//export const endpoint = "http://localhost:3344/graphql";
+// export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
+export const endpoint = "http://localhost:3344/graphql";
 
 class profileService {
 
   workspaces = null;
+  // wsId = null;
 
   getMyWorkspaces = async () => {
     const query = `
@@ -65,7 +66,7 @@ class profileService {
     return await graphQLClient.request(query);
   }
 
-  getUserId = async (ws) => {
+  getUserId = async () => {
     const query = `
     query Profile {
       profile{userId}
@@ -78,6 +79,104 @@ class profileService {
     })
     return await graphQLClient.request(query);
   }  
+
+  addHoliday = async (data, id) => {
+    const format = "YYYY-MM-DD";
+    const value = data.date && data.date.format(format);
+    const query = `
+    mutation {
+      addWorkspaceDate(
+        name: "${data.title}", 
+        wsId: ${id}, date: "${value}", 
+        isOfficialHoliday: ${data.officialHoliday}
+      ) {
+      ok
+      }
+    }
+    `;
+    const graphQLClient = new GraphQLClient(endpoint, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    return await graphQLClient.request(query);
+  }  
+
+  removeHoliday = async (id) => {
+    const query = `
+    mutation {
+      removeWorkspaceDate(id: ${id}) {
+        ok
+      }
+    }
+    `;
+    const graphQLClient = new GraphQLClient(endpoint, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    return await graphQLClient.request(query);
+  }  
+
+  getHolidayData = async (id) => {
+    const query = `
+    {
+      workspaceDates(workspaceId:${id}) {
+          id
+          name
+          date
+          isOfficialHoliday
+        }
+      }
+    `;
+    const graphQLClient = new GraphQLClient(endpoint, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    return await graphQLClient.request(query);
+  }  
+
+  addWorkspaceMember = async (email, wsId) => {
+    const query = `
+    mutation {
+      addWorkspaceMember(email: "${email}", wsId: ${wsId}) {
+        ok
+      }
+    }
+    `;
+    const graphQLClient = new GraphQLClient(endpoint, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    return await graphQLClient.request(query);
+  }
+
+  getWSMembers = async (wsId) => {
+    const query = `
+    {
+      workspaceMembers (workspaceId:10) {
+        userId
+        startDate
+        profile {
+          userId
+          firstName
+          lastName
+          email
+        }
+      }
+    }
+    `;
+    const graphQLClient = new GraphQLClient(endpoint, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    return await graphQLClient.request(query);
+  }  
+
+
 
 }  
 

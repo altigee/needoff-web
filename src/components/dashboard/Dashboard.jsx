@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { find } from 'lodash';
 import { Route, Switch } from 'react-router-dom';
 import { Button, Modal, Spin } from 'antd';
-import authService from './../authService/authService';
+import authService from './../auth/authService/authService';
 import profileService from './../profileService/profileService';
-import WorkSpace from './../workSpace/WorkSpace';
+import Workspace from './../workspace/Workspace';
 import InputForm from './../inputForm/InputForm';
 import SelectForm from './../selectForm/SelectForm';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
 import history from './../router/history';
+
 import 'antd/dist/antd.css'; 
 
 const focusOnError = createDecorator();
@@ -147,9 +148,11 @@ const Dashboard = (props) => {
       <>
         { !localStorage.getItem("currentWS") && workspaces.length > 1 && selectWS() }
         <Switch>
-          <Route path="/dashboard/:currentWS" render={ (props) => <WorkSpace ws={ws} {...props}/>} />
+          <Route path="/dashboard/:currentWS" render={ (props) => <Workspace ws={ws} {...props}/>} />
         </Switch>
         <Button onClick={authService.logout}>Log out</Button>
+        <br />
+        <Button type="link" onClick={() => history.push('/main')}>Main Menu</Button>
       </>
     )
   }

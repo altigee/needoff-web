@@ -1,8 +1,8 @@
-import history from './../router/history';
+import history from './../../router/history';
 import { request } from 'graphql-request';
 
-export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
-// export const endpoint = "http://localhost:3344/graphql";
+// export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
+export const endpoint = "http://localhost:3344/graphql";
 
 class AuthService {
 
