@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 
 import { Button } from 'antd';
-import InputForm from './../../../components/inputForm/InputForm';
+import InputForm from './../../form/inputForm/InputForm';
 
 import AuthLayout from '../../auth/authLayout/AuthLayout';
 import history from '../../router/history';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
-import authService from './../../auth/authService/authService';
+import authService from './../../../services/authService/authService';
 
 import './../styles.scss';
 import 'antd/dist/antd.css'; 
@@ -21,7 +21,7 @@ export default class Login extends Component {
   render() {
     return (
       <AuthLayout>
-        <div className="auth-wrap">
+        <div className="auth-wrap auth-wrap-login">
           <Form 
             onSubmit={this.onSubmit}
             decorators={[focusOnError]}
@@ -52,6 +52,7 @@ export default class Login extends Component {
                   <Field 
                     name="password"
                     component={InputForm}
+                    type='password'
                     placeholder="Enter your password"
                   />  
                 </div>

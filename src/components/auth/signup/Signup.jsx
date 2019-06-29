@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
 import { Button } from 'antd';
-import InputForm from './../../../components/inputForm/InputForm';
+import InputForm from './../../form/inputForm/InputForm';
 import history from '../../router/history';
 import AuthLayout from '../../auth/authLayout/AuthLayout';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
-import authService from './../../auth/authService/authService';
+import authService from './../../../services/authService/authService';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
@@ -20,7 +20,7 @@ export default class Signup extends Component {
   render() {
     return (
       <AuthLayout>
-        <div className="auth-wrap">
+        <div className="auth-wrap auth-wrap-signup">
           <Form 
             onSubmit={this.onSubmit}
             decorators={[focusOnError]}

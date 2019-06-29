@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Input } from 'antd';
 
-import './styles.scss';
+import './../styles.scss';
 import 'antd/dist/antd.css'; 
 
 const InputForm = ({ input, meta, ...rest }) => (

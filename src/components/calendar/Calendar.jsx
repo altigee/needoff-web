@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { find } from 'lodash';
 import { Route, Switch } from 'react-router-dom';
 import { Button, Modal, Spin, Calendar as CalendarAntd, Alert, Badge } from 'antd';
-import profileService from './../profileService/profileService';
+import profileService from './../../services/profileService/profileService';
 import history from '../router/history';
 import './styles.scss';
 
@@ -16,10 +16,10 @@ const Calendar = () => {
 
   useEffect(() => { 
     (async() => {
-      const workspaces = await profileService.getMyWorkspaces();
+      const workspaces = await profileService.fetchMyWorkspaces();
       // setWorkspaces(workspaces);
       console.log(workspaces);
-      const id = find(workspaces, { 'name': localStorage.getItem("currentWS") }).id;
+      const id = find(workspaces, { 'name': localStorage.getItem("currentWs") }).id;
       const holidayDays = await profileService.getHolidayData(id);
       setHolidays(holidayDays.workspaceDates);
       setLoading(false);

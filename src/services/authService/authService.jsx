@@ -1,4 +1,4 @@
-import history from './../../router/history';
+import history from './../../components/router/history';
 import { request } from 'graphql-request';
 
 // export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
@@ -6,38 +6,35 @@ export const endpoint = "http://localhost:3344/graphql";
 
 class AuthService {
 
-  status = false;
-
-  login = async (values) => {
-    console.log(values);
+  login = async ({login, password}) => {
+    console.log(login);
     const mutation = `mutation {
-      login(email: "${values.login}", password:"${values.password}") {
+      login(email: "${login}", password:"${password}") {
         accessToken
         refreshToken
       }
     }`;
     try {
       const data = await request(endpoint, mutation);
-      this.status = true;
       localStorage.setItem("token", data.login.accessToken);
-      localStorage.setItem("email", values.login);
-      history.push('/dashboard');
+      localStorage.setItem("email", login);
+      history.push('/main/workspaces');
     }
     catch (error) {
       console.log(error);
-        history.push('/auth/login');
+      history.push('/auth/login');
     }
   }
 
-  register = async (values) => {
-    console.log(values);
+  register = async ({login, password, firstName, lastName}) => {
+    console.log(login);
     const mutation = `mutation register {
       register(
-        email: "${values.login}", 
-        password:"${values.password}", 
+        email: "${login}", 
+        password:"${password}", 
         userData: { 
-          firstName: "${values.firstName}",
-          lastName: "${values.lastName}",
+          firstName: "${firstName}",
+          lastName: "${lastName}",
         }
       ) {
           userId
@@ -47,11 +44,9 @@ class AuthService {
     }`;
     try {
       const data = await request(endpoint, mutation);
-      console.log(data);
-      this.status = true;
       localStorage.setItem("token", data.register.accessToken);
-      localStorage.setItem("email", values.login);
-      history.push('/dashboard');
+      localStorage.setItem("email", login);
+      history.push('/main/profile');
     }
     catch(error) {
       console.log(error);
@@ -60,14 +55,13 @@ class AuthService {
   }
 
   getStatus = () => {
-    return this.status || localStorage.getItem("token");
+    return localStorage.getItem("token");
   }
 
   logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
-    localStorage.removeItem("currentWS");
-    this.status = false;
+    localStorage.removeItem("currentWs");
     history.push('/auth/login');
   }
 }

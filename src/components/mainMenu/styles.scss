@@ -1,0 +1,15 @@
+.nd-main-wrapper {
+  background-color: #ddd;
+  border-top: 1px solid #bbb;
+  border-bottom: 1px solid #bbb;
+
+  button.ant-btn-link {
+    border-radius: 0px;
+    color: black;
+    &:hover {
+      background-color: #bbb;
+      border-radius: none;
+    }  
+  }
+  
+}

@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 
 import { Route, Redirect, Switch } from 'react-router-dom';
 import Auth from './components/auth/Auth';
-import Dashboard from './components/dashboard/Dashboard';
 import MainMenu from './components/mainMenu/MainMenu'
-import Calendar from './components/calendar/Calendar';
-import authService from './components/auth/authService/authService';
+import authService from './services/authService/authService';
 
 export default class Routes extends Component {
   
@@ -18,10 +16,8 @@ export default class Routes extends Component {
   renderAuthedRoutes = () => {
       return (
           <Switch>
-            <Route path="/dashboard" component={Dashboard} />
             <Route path="/main" component={MainMenu} />
-            <Route path="/calendar" component={Calendar} />
-            <Redirect to="/dashboard" />
+            <Redirect to="/main" />
           </Switch>
       );
     }
