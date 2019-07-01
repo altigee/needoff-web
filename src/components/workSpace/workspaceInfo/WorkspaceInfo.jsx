@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { assign } from 'lodash';
 import profileService from './../../../services/profileService/profileService';
-import { Button } from 'antd';
+import { Button, Table } from 'antd';
 import history from './../../router/history';
 import InputForm from './../../form/inputForm/InputForm';
 import TextAreaForm from './../../form/inputTextArea/InputTextArea';
@@ -17,45 +18,86 @@ const WorkspaceInfo = (props) => {
 
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
+  const [edit, setEdit] = useState(false);
 
   useEffect(() => {
     (async() => {
-      const userInfo = await profileService.getUserInfo();
-      console.log(userInfo);
-      setUserInfo(userInfo);
+      try {
+        const userInfo = await profileService.getUserInfo();
+        console.log(userInfo);
+        setUserInfo(userInfo);
+      }
+      catch (error) {
+        throw(error);
+      }
       setLoading(false);
     })();
   },[]);
 
-  const onUpdateWorkspace = async(data) => {
-    console.log(data);
-    try {
-      setLoading(true);
-      await profileService.updateWorkspaceInfo(data, currentWs.id);
-      localStorage.setItem("currentWs", data.name);
-      await profileService.fetchMyWorkspaces();
-      setLoading(false);
-      history.push(`/`);
-    }
-    catch(error) {
-      console.log(error);
-      setLoading(false);
-    }
+  const wsInfo = (name, description, paid, unpaid, sick) => {
+    const data = [];
+    data.push(assign({}, {key: name, name, description, paid, unpaid, sick}));
+    const columns = [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: 'Description',
+        dataIndex: 'description',
+        key: 'description',
+      },
+      {
+        title: 'Paid vacation days per year',
+        dataIndex: 'paid',
+        key: 'paid',
+      },
+      {
+        title: 'Unpaid vacation days per year',
+        dataIndex: 'unpaid',
+        key: 'unpaid',
+      },
+      {
+        title: 'Sick leaves',
+        dataIndex: 'sick',
+        key: 'sick',
+      },
+    ];  
+    return (
+      <div className='nd-workspace-info-wrapper'>
+        <Table dataSource={data} columns={columns} pagination={false}/>
+        <br />
+        <Button type="primary" onClick = {()=> setEdit(true)}>Edit</Button>
+      </div> 
+    )
   }
 
-  // const workspaces = profileService.getMyWorkspaces;
+  const onUpdateWorkspace = async(data) => {
+    console.log(data);
+    setLoading(true);
+    try {
+      await profileService.updateWorkspaceInfo(data, id);
+      localStorage.setItem("currentWs", data.name);
+    }
+    catch(error) {
+      throw(error);
+    }
+    setEdit(false)
+    history.push(`/`);
+  }
+
   if (loading) return <Loading />;
-  // console.log(workspaces)
-  const currentWs = profileService.getWs;
-  console.log(currentWs);
+  const { name, description, id } = profileService.getWs;
   const { firstName, lastName, email } = userInfo.profile;
   return (
     <>
       <div className="nd-workspace-info-owner">
-        <span><strong>Owner: </strong></span>
+        <label><strong>Owner: </strong></label>
         <span>  {firstName} {lastName} ({email})</span>
       </div>
-      <div className="nd-workspace-info-wrapper">
+      { !edit && wsInfo(name, description, 0, 0, 0) }
+      { edit && <div className="nd-workspace-info-wrapper">
         <Form 
           onSubmit={onUpdateWorkspace}
           decorators={[focusOnError]}
@@ -77,7 +119,7 @@ const WorkspaceInfo = (props) => {
                   <Field 
                     name="name"
                     component={InputForm}
-                    defaultValue={currentWs.name}
+                    defaultValue={name}
                   />
                   <br />
                 </div>
@@ -87,7 +129,7 @@ const WorkspaceInfo = (props) => {
                   <Field 
                     name="description"
                     component={TextAreaForm}
-                    defaultValue={currentWs.description}
+                    defaultValue={description}
                     rows={3}
                   />
                 </div>
@@ -127,7 +169,7 @@ const WorkspaceInfo = (props) => {
                   <Button type="primary" htmlType="submit">Update</Button>
                   <Button 
                     type="secondary" 
-                    onClick={() => history.push(`/main/workspaces/${localStorage.getItem("currentWs")}/info`)}
+                    onClick={() => setEdit(false)}
                   >
                     Cancel
                   </Button>
@@ -136,7 +178,7 @@ const WorkspaceInfo = (props) => {
             </form>
           )}
         </Form>
-      </div>
+      </div>}
     </>
   )
 }

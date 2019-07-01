@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { find } from 'lodash';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { Button, Modal} from 'antd';
 import profileService from './../../services/profileService/profileService';
 import Workspace from './../workspace/Workspace';
+import WorkspacesList from './WorkspacesList';
 import InputForm from './../form/inputForm/InputForm';
 import SelectForm from './../form/selectForm/SelectForm';
 import Loading from './../loading/Loading';
@@ -15,7 +15,7 @@ import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
 
-const Workspaces = (props) => {
+const Workspaces = () => {
 
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(true);
@@ -30,31 +30,35 @@ const Workspaces = (props) => {
       }
       if (workspaces.length === 1) {
         localStorage.setItem("currentWs", workspaces[0].name);
-
         history.push(`/main/workspaces/${lsCurrentWs}`);
       }
       setLoading(false);
   }, [visible,loading]);
 
   const onSubmitCreateWs = async (data) => {
-    await profileService.createWorkspaces(data);
-    await profileService.fetchMyWorkspaces();
+    try {
+      await profileService.createWorkspaces(data);
+    }
+    catch(error) {
+      throw(error);
+    }
     setVisible(false);
     history.push(`/`);
   }
 
-  const onSubmitSelectWS = async (data) => {
+  const onSubmitSelectWs = async (data) => {
     console.log(data);
     localStorage.setItem("currentWs", data.name);
     setVisible(false);
   } 
 
-  const createWS = () => {
+  const createWs = () => {
     return (
       <Modal
           title="Add your Workspace"
           visible={visible}
           footer={null}
+          closable={false}
       >
         <Form 
           onSubmit={onSubmitCreateWs}
@@ -99,16 +103,17 @@ const Workspaces = (props) => {
     )
   }
 
-  const selectWS = () => {
+  const selectWs = () => {
     return (
       <>
         <Modal
           title="Choose your WS"
           visible={visible}
           footer={null}
+          closable={false}
         >
           <Form 
-            onSubmit={onSubmitSelectWS}
+            onSubmit={onSubmitSelectWs}
             decorators={[focusOnError]}
             validate={values => {
               const errors = {};
@@ -132,6 +137,12 @@ const Workspaces = (props) => {
                   <br />
                   <br />
                   <Button type="primary" htmlType="submit">Ok</Button>
+                  <Button 
+                    type="secondary" 
+                    onClick={() => setVisible(false)}
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </form>
             )}
@@ -142,12 +153,12 @@ const Workspaces = (props) => {
   }
 
   const toWorkspace = () => {
-    console.log(history)
     return (
       <>
-        { !localStorage.getItem("currentWs") && workspaces.length > 1 && selectWS() }
+        { !localStorage.getItem("currentWs") && workspaces.length > 1 && selectWs() }
         <Switch>
           <Route path="/main/workspaces/:currentWs" component={Workspace} />
+          <Route path="/main/workspaces" component={WorkspacesList} />
         </Switch>
       </>
     )
@@ -155,7 +166,7 @@ const Workspaces = (props) => {
 
   if (loading) return <Loading />
     return  !workspaces.length  
-      ? createWS() 
+      ? createWs() 
       : toWorkspace();
 }  
 

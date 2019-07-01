@@ -23,7 +23,6 @@ class profileService {
 
   get getWs() {
     const currentWs = find(this.workspaces, { 'name': localStorage.getItem("currentWs") });
-    console.log(currentWs)
     return currentWs;
   }
 
@@ -227,6 +226,31 @@ class profileService {
         ok
       }
     }	
+    `;
+
+    return await this.getGraphQLClient.request(query);
+  }
+
+  updateStartDate = async (wsId, userId, startDate) => {
+    const query = `
+    mutation {
+      updateWorkspaceMember(wsId: ${wsId}, userId:${userId}, startDate:"${startDate}") {
+         ok
+       }
+     }	
+    `;
+
+    return await this.getGraphQLClient.request(query);
+  }
+
+  getWsOwner = async (id) => {
+    const query = `
+    {
+      workspaceOwner(workspaceId:${id}) {
+          userId
+          email
+        }
+      }
     `;
 
     return await this.getGraphQLClient.request(query);
