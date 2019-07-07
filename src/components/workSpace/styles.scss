@@ -1,7 +1,6 @@
 .nd-workspace-wrapper {
   padding-top: 24px;
   background-color: #eee;
-  
 
   .nd-workspace-info-wrapper {
     padding: 24px;
@@ -11,10 +10,11 @@
       background-color: #ddd;
     }
 
-    input, textarea {
+    input,
+    textarea {
       width: 50vw;
     }
-  
+
     textarea {
       resize: none;
     }
@@ -49,4 +49,3 @@
     }
   }
 }
-  

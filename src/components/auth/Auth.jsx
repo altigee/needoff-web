@@ -6,10 +6,9 @@ import Login from './login/Login';
 import Signup from './signup/Signup';
 
 import './styles.scss';
-import 'antd/dist/antd.css'; 
+import 'antd/dist/antd.css';
 
 export default class Auth extends Component {
-
   render() {
     return (
       <Switch>
@@ -19,4 +18,4 @@ export default class Auth extends Component {
       </Switch>
     );
   }
-}  
+}

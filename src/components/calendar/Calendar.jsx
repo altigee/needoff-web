@@ -6,7 +6,6 @@ import { format, FORMATS } from './../utils/date';
 import './styles.scss';
 
 const Calendar = () => {
-
   const [loading, setLoading] = useState(true);
   const [holidays, setHolidays] = useState(null);
   const [selectedValue, setSelectedValue] = useState(null);
@@ -14,18 +13,17 @@ const Calendar = () => {
   const [vacations, setVacations] = useState(null);
   const [listVacations, setListVacations] = useState(null);
 
-  useEffect(() => { 
-    (async() => {
+  useEffect(() => {
+    (async () => {
       try {
-        const [holidays, vacations ] = await Promise.all([
+        const [holidays, vacations] = await Promise.all([
           profileService.getHolidayData(profileService.getWs.id),
-          profileService.getVacationDays(profileService.getWs.id),
+          profileService.getVacationDays(profileService.getWs.id)
         ]);
         setHolidays(holidays.workspaceDates);
         setVacations(vacations.teamCalendar);
-      }
-      catch(error) {
-        throw(error);
+      } catch (error) {
+        throw error;
       }
       setLoading(false);
     })();
@@ -40,7 +38,10 @@ const Calendar = () => {
       if (day.startDate === cellDate) {
         return day;
       }
-      if (day.startDate < cellDate && (day.endDate > cellDate || day.endDate === cellDate )) {
+      if (
+        day.startDate < cellDate &&
+        (day.endDate > cellDate || day.endDate === cellDate)
+      ) {
         return day;
       }
       return false;
@@ -48,12 +49,16 @@ const Calendar = () => {
     setListVacations(vacdata);
   };
 
-  const dateCellRender = (value) => {
+  const dateCellRender = value => {
     const cellDate = format(value);
     const ldata = holidays.filter(day => day.date === cellDate);
     let paid, sick, unpaid, wfh;
     const vacdata = vacations.filter(day => {
-      if (day.startDate ===cellDate || (day.startDate < cellDate && (day.endDate > cellDate || day.endDate === cellDate ))){
+      if (
+        day.startDate === cellDate ||
+        (day.startDate < cellDate &&
+          (day.endDate > cellDate || day.endDate === cellDate))
+      ) {
         if (day.leaveType === 'VACATION_PAID') paid = true;
         if (day.leaveType === 'VACATION_UNPAID') unpaid = true;
         if (day.leaveType === 'SICK_LEAVE') sick = true;
@@ -62,17 +67,19 @@ const Calendar = () => {
       }
       return false;
     });
-    
+
     return (
       <>
-        { !!vacdata.length && paid && <span className='vacation-paid'>.</span> }
-        { !!vacdata.length && unpaid && <span className='vacation-unpaid'>.</span> }
-        { !!vacdata.length && sick && <span className='vacation-sick'>.</span> }
-        { !!vacdata.length && wfh && <span className='vacation-wfh'>.</span> }
-        { !!ldata.length && <span className='holiday-date'>.</span> }
+        {!!vacdata.length && paid && <span className="vacation-paid">.</span>}
+        {!!vacdata.length && unpaid && (
+          <span className="vacation-unpaid">.</span>
+        )}
+        {!!vacdata.length && sick && <span className="vacation-sick">.</span>}
+        {!!vacdata.length && wfh && <span className="vacation-wfh">.</span>}
+        {!!ldata.length && <span className="holiday-date">.</span>}
       </>
     );
-  }
+  };
 
   const showHolidaysEvents = () => {
     return (
@@ -87,8 +94,8 @@ const Calendar = () => {
           ))}
         </ul>
       </>
-    )
-  }
+    );
+  };
 
   const leavesMessages = (list, messageType) => {
     return (
@@ -99,9 +106,15 @@ const Calendar = () => {
             {list.map(item => {
               let type = item.leaveType;
               if (type === 'VACATION_PAID') {
-                type = item.startDate === item.endDate ? 'Vacation (1 day)' : 'Vacation';
+                type =
+                  item.startDate === item.endDate
+                    ? 'Vacation (1 day)'
+                    : 'Vacation';
               } else if (type === 'VACATION_UNPAID') {
-                type = item.startDate === item.endDate ? 'Vacation upaid (1 day)' : 'Vacation (unpaid)';
+                type =
+                  item.startDate === item.endDate
+                    ? 'Vacation upaid (1 day)'
+                    : 'Vacation (unpaid)';
               } else if (type === 'SICK_LEAVE') {
                 type = 'Sick leave';
               } else {
@@ -113,22 +126,28 @@ const Calendar = () => {
                   <br />
                   {type}
                   <br />
-                  {format(item.startDate, FORMATS.MMMMDoYYYY)} - {format(item.endDate, FORMATS.MMMMDoYYYY)}
+                  {format(item.startDate, FORMATS.MMMMDoYYYY)} -{' '}
+                  {format(item.endDate, FORMATS.MMMMDoYYYY)}
                   <br />
                   {item.comment}
                 </li>
-              )}
-            )}
+              );
+            })}
           </ul>
-          }
-      />)
-    }
+        }
+      />
+    );
+  };
 
   const showLeavesEvents = () => {
-    const paid = listVacations.filter(item => item.leaveType === 'VACATION_PAID' );
-    const unpaid = listVacations.filter(item => item.leaveType === 'VACATION_UNPAID');
-    const sick = listVacations.filter(item => item.leaveType === 'SICK_LEAVE' );
-    const wfh = listVacations.filter(item => item.leaveType === 'WFH' );
+    const paid = listVacations.filter(
+      item => item.leaveType === 'VACATION_PAID'
+    );
+    const unpaid = listVacations.filter(
+      item => item.leaveType === 'VACATION_UNPAID'
+    );
+    const sick = listVacations.filter(item => item.leaveType === 'SICK_LEAVE');
+    const wfh = listVacations.filter(item => item.leaveType === 'WFH');
     return (
       <>
         {!!paid.length && leavesMessages(paid, 'success')}
@@ -136,25 +155,24 @@ const Calendar = () => {
         {!!wfh.length && leavesMessages(wfh, 'info')}
         {!!unpaid.length && leavesMessages(unpaid, 'warning')}
       </>
-    )
-  }
+    );
+  };
 
-  if (loading) return <Loading />
+  if (loading) return <Loading />;
   return (
     <div>
-      <CalendarAntd 
+      <CalendarAntd
         fullscreen={false}
         dateCellRender={dateCellRender}
         onSelect={onSelect}
       />
-      <br/>
-      { selectedValue && !!listHolidays.length && <Alert
-        type={"error"}
-        message={showHolidaysEvents()}
-      /> }
-      { selectedValue && !!listVacations.length && showLeavesEvents() }
+      <br />
+      {selectedValue && !!listHolidays.length && (
+        <Alert type={'error'} message={showHolidaysEvents()} />
+      )}
+      {selectedValue && !!listVacations.length && showLeavesEvents()}
     </div>
   );
-}  
+};
 
 export default Calendar;

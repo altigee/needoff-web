@@ -1,33 +1,34 @@
 import { find } from 'lodash';
 import { format } from './../../components/utils/date';
 
-export const endpoint = "http://localhost:3344/graphql";
+export const endpoint = 'http://localhost:3344/graphql';
 
 class profileService {
-
   workspaces = null;
   user = null;
   owner = null;
 
-  graphqlClient = async(query) => {
+  graphqlClient = async query => {
     const response = await fetch('http://localhost:3344/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+        Accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       },
-      body: JSON.stringify({query}),
+      body: JSON.stringify({ query })
     });
     return await (await response.json()).data;
-  }
+  };
 
   get getMyWorkspaces() {
     return this.workspaces;
   }
 
   get getWs() {
-    const currentWs = find(this.workspaces, { 'name': localStorage.getItem("currentWs") });
+    const currentWs = find(this.workspaces, {
+      name: localStorage.getItem('currentWs')
+    });
     return currentWs;
   }
 
@@ -41,25 +42,24 @@ class profileService {
       }
     }
     `;
-    
+
     try {
       const workspaces = await this.graphqlClient(query);
       this.workspaces = workspaces.myWorkspaces;
-    }
-    catch(error) {
+    } catch (error) {
       this.workspaces = null;
-      throw(error);
+      throw error;
     }
     return this.workspaces;
-  }
+  };
 
-  createWorkspaces = async ({name, description}) => {
+  createWorkspaces = async ({ name, description }) => {
     const query = `
     mutation {
       createWorkspace(
         name: "${name}", 
         description: "${description}",
-         members: ["${localStorage.getItem("email")}"]
+         members: ["${localStorage.getItem('email')}"]
       ) {
         ws{
           id
@@ -70,9 +70,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }  
+  };
 
-  getMyLeaves = async (ws) => {
+  getMyLeaves = async ws => {
     const query = `
     query {
       myLeaves(workspaceId: ${ws}) {
@@ -88,9 +88,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  getUserInfo = async() => {
+  getUserInfo = async () => {
     const query = `
     query Profile {
       profile{
@@ -107,16 +107,14 @@ class profileService {
     try {
       const user = await this.graphqlClient(query);
       this.user = user.profile;
-    }
-    catch(error) {
+    } catch (error) {
       this.user = null;
-      throw(error);
-      
+      throw error;
     }
     return this.user;
-  } 
+  };
 
-  addHoliday = async ({title, date, officialHoliday}, id) => {
+  addHoliday = async ({ title, date, officialHoliday }, id) => {
     const query = `
     mutation {
       addWorkspaceDate(
@@ -130,9 +128,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  removeHoliday = async (id) => {
+  removeHoliday = async id => {
     const query = `
     mutation {
       removeWorkspaceDate(id: ${id}) {
@@ -142,9 +140,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }  
+  };
 
-  getHolidayData = async (id) => {
+  getHolidayData = async id => {
     const query = `
     {
       workspaceDates(workspaceId:${id}) {
@@ -157,7 +155,7 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }  
+  };
 
   addWorkspaceMember = async (email, wsId, startDate) => {
     const query = `
@@ -169,9 +167,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  getWSMembers = async (wsId) => {
+  getWSMembers = async wsId => {
     const query = `
     {
       workspaceMembers (workspaceId:${wsId}) {
@@ -188,9 +186,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  getWSMembersInvitations = async (wsId) => {
+  getWSMembersInvitations = async wsId => {
     const query = `
     {
       workspaceInvitations (workspaceId:${wsId}) {
@@ -203,7 +201,7 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
   removeWorkspaceMember = async (email, wsId) => {
     const query = `
@@ -215,9 +213,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  updateWorkspaceInfo = async ({name, description}, wsId) => {
+  updateWorkspaceInfo = async ({ name, description }, wsId) => {
     const query = `
     mutation {
       updateWorkspace(name: "${name}", description: "${description}", wsId: ${wsId},) {
@@ -227,7 +225,7 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
   updateStartDate = async (wsId, userId, startDate) => {
     const query = `
@@ -239,9 +237,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  getWsOwner = async (id) => {
+  getWsOwner = async id => {
     const query = `
     {
       workspaceOwner(workspaceId:${id}) {
@@ -254,16 +252,14 @@ class profileService {
     try {
       const owner = await this.graphqlClient(query);
       this.owner = owner.workspaceOwner;
-    }
-    catch(error) {
+    } catch (error) {
       this.owner = null;
-     throw(error);
-      
+      throw error;
     }
     return this.owner;
-  } 
+  };
 
-  getVacationDays = async (wsId) => {
+  getVacationDays = async wsId => {
     const query = `
     query {
       teamCalendar(workspaceId: ${wsId}) {
@@ -284,9 +280,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  getMyBalance = async (wsId) => {
+  getMyBalance = async wsId => {
     const query = `
     query {
       myBalance(workspaceId: ${wsId}) {
@@ -301,9 +297,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }  
+  };
 
-  createDayOff = async ({startDate, endDate, comment}, type, wsId) => {
+  createDayOff = async ({ startDate, endDate, comment }, type, wsId) => {
     const query = `
     mutation {
       createDayOff(
@@ -325,9 +321,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
+  };
 
-  getDaysOffForApproval = async (wsId) => {
+  getDaysOffForApproval = async wsId => {
     const query = `
     query {
       dayOffsForApproval(workspaceId: ${wsId}) {
@@ -346,9 +342,9 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }  
+  };
 
-  approveDayOff = async (dayOffId) => {
+  approveDayOff = async dayOffId => {
     const query = `
     mutation {
       approveDayOff(dayOffId:${dayOffId}){
@@ -358,7 +354,7 @@ class profileService {
     `;
 
     return this.graphqlClient(query);
-  }
-}  
+  };
+}
 
 export default new profileService();

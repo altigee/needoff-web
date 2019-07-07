@@ -4,7 +4,7 @@ export const MAIN_ROUTES = {
   LEAVES: '/main/leaves',
   TODO: '/main/todo',
   CALENDAR: '/main/calendar',
-  PROFILE: '/main/profile',
+  PROFILE: '/main/profile'
 };
 
 export default MAIN_ROUTES;

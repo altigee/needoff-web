@@ -14,71 +14,69 @@ import 'antd/dist/antd.css';
 const focusOnError = createDecorator();
 
 export default class Signup extends Component {
-
   onSubmit = authService.register;
 
   render() {
     return (
       <AuthLayout>
         <div className="auth-wrap auth-wrap-signup">
-          <Form 
+          <Form
             onSubmit={this.onSubmit}
             decorators={[focusOnError]}
             validate={values => {
               const errors = {};
               if (!values.firstName) {
-                errors.firstName = "Required";
+                errors.firstName = 'Required';
               }
               if (!values.lastName) {
-                errors.lastName = "Required";
+                errors.lastName = 'Required';
               }
               if (!values.login) {
-                errors.login = "Required";
+                errors.login = 'Required';
               }
               if (!values.password) {
-                errors.password = "Required";
+                errors.password = 'Required';
               }
               return errors;
             }}
           >
-            {(
-              {handleSubmit}) => (
+            {({ handleSubmit }) => (
               <form onSubmit={handleSubmit}>
-                <div className='auth-wrap-input'>
+                <div className="auth-wrap-input">
                   <label>First Name</label>
-                  <Field 
+                  <Field
                     name="firstName"
                     component={InputForm}
                     placeholder="Enter your First Name"
                   />
                 </div>
-                <div className='auth-wrap-input'>
+                <div className="auth-wrap-input">
                   <label>Last Name</label>
-                  <Field 
+                  <Field
                     name="lastName"
                     component={InputForm}
                     placeholder="Enter your Last Name"
                   />
                 </div>
-                <div className='auth-wrap-input'>
+                <div className="auth-wrap-input">
                   <label>Login</label>
-                  <Field 
+                  <Field
                     name="login"
                     component={InputForm}
                     placeholder="login"
                   />
                 </div>
-                <div className='auth-wrap-input'>
+                <div className="auth-wrap-input">
                   <label>Password</label>
-                  <Field 
+                  <Field
                     name="password"
                     component={InputForm}
                     placeholder="password"
-                  />  
+                  />
                 </div>
                 <div className="auth-wrap-button">
                   <Button htmlType="submit">Create Account</Button>
-                  <Button 
+                  <Button
                     type="link"
                     onClick={() => history.push('/auth/login')}
                   >
@@ -92,4 +90,4 @@ export default class Signup extends Component {
       </AuthLayout>
     );
   }
-}  
+}

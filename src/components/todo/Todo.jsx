@@ -5,156 +5,163 @@ import { Button, Table, Modal, Divider } from 'antd';
 import Loading from './../loading/Loading';
 
 import './styles.scss';
-import 'antd/dist/antd.css'; 
+import 'antd/dist/antd.css';
 
-const Todo = (props) => {
+const Todo = props => {
   const [loading, setLoading] = useState(true);
   const [approvalDaysOff, setApprovalDayOff] = useState(null);
 
   useEffect(() => {
-    (async() => {
+    (async () => {
       try {
-        const approvalDaysOff = await profileService.getDaysOffForApproval(profileService.getWs.id);
+        const approvalDaysOff = await profileService.getDaysOffForApproval(
+          profileService.getWs.id
+        );
         setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
-      }
-      catch(error) {
-        throw(error);
+      } catch (error) {
+        throw error;
       }
       setLoading(false);
     })();
-    
-  },[]);
+  }, []);
 
   const reject = () => {
     console.log('reject');
-  }
+  };
 
-  const approveDayOffRequest = (record) => {
+  const approveDayOffRequest = record => {
     Modal.confirm({
       title: 'Do you want to approve this request?',
       icon: 'check-circle',
       onOk() {
-        (async() => {
+        (async () => {
           try {
             await profileService.approveDayOff(record.id);
-            const approvalDaysOff = await profileService.getDaysOffForApproval(profileService.getWs.id);
+            const approvalDaysOff = await profileService.getDaysOffForApproval(
+              profileService.getWs.id
+            );
             setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
             props.setCount(approvalDaysOff.dayOffsForApproval.length);
-          }
-          catch(error) {
-            throw(error);
+          } catch (error) {
+            throw error;
           }
         })();
       },
       onCancel() {
         console.log('Cancel');
-      },
+      }
     });
-  }
+  };
 
   const showRequestsForApprove = () => {
-    const data = approvalDaysOff.map(
-      item => assign(
+    const data = approvalDaysOff.map(item =>
+      assign(
         {},
         {
-          id: item.id, 
+          id: item.id,
           key: item.id,
           email: item.user.email,
           startDate: item.startDate,
           endDate: item.endDate,
           leaveType: item.leaveType,
-          name: `${item.user.firstName} ${item.user.lastName}`,
-        }),
+          name: `${item.user.firstName} ${item.user.lastName}`
+        }
+      )
     );
 
     const columns = [
       {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name',
+        key: 'name'
       },
       {
         title: 'Type',
         key: 'leaveType',
-        render: (record) => {
+        render: record => {
           let type;
           switch (record.leaveType) {
-            case 'VACATION_PAID' : 
+            case 'VACATION_PAID':
               type = 'Paid vacation';
               break;
-            case 'VACATION_UNPAID' : 
+            case 'VACATION_UNPAID':
               type = 'Unpaid vacation';
               break;
-            case 'SICK_LEAVE' : 
+            case 'SICK_LEAVE':
               type = 'Sick leave';
               break;
-            default: type = 'Work From Home';
+            default:
+              type = 'Work From Home';
           }
-          return (
-            <span>
-              {type}
-            </span>
-          )
+          return <span>{type}</span>;
         }
       },
       {
         title: 'Start Date',
         dataIndex: 'startDate',
-        key: 'startDate',
+        key: 'startDate'
       },
       {
         title: 'End Date',
         dataIndex: 'endDate',
-        key: 'endDate',
+        key: 'endDate'
       },
       {
         title: 'Email',
         dataIndex: 'email',
-        key: 'email',
+        key: 'email'
       },
       {
         title: 'Comment',
         dataIndex: 'comment',
-        key: 'comment',
+        key: 'comment'
       },
       {
         title: 'Action',
         key: 'action',
-        render: (record) => {
+        render: record => {
           return (
             <>
               <span>
                 <span>
-                <Button 
-                    type='link'
+                  <Button
+                    type="link"
                     onClick={() => approveDayOffRequest(record)}
                   >
-                  Approve
+                    Approve
                   </Button>
                 </span>
-                  <Divider type="vertical" />
+                <Divider type="vertical" />
                 <span>
-                  <Button type='link' onClick={() => reject(record)}>Reject</Button>
+                  <Button type="link" onClick={() => reject(record)}>
+                    Reject
+                  </Button>
                 </span>
               </span>
             </>
-        )},
-      },
+          );
+        }
+      }
     ];
 
     return (
-      <Table dataSource={data} size="small" columns={columns} pagination={false}/>
-    )
-  }
+      <Table
+        dataSource={data}
+        size="small"
+        columns={columns}
+        pagination={false}
+      />
+    );
+  };
 
   if (loading) return <Loading />;
   return (
     <>
       <div className="nd-todo-wrapper">
-        { approvalDaysOff && showRequestsForApprove() }
+        {approvalDaysOff && showRequestsForApprove()}
       </div>
-    </> 
-  )
-}
+    </>
+  );
+};
 
 export default Todo;
