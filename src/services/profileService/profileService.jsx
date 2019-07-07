@@ -1,4 +1,3 @@
-import { GraphQLClient } from 'graphql-request';
 import { find } from 'lodash';
 import { format } from './../../components/utils/date';
 
