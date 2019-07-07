@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Spin,Icon } from 'antd';
 
 import 'antd/dist/antd.css';

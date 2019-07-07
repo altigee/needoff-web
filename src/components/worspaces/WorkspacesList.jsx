@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { find, assign } from 'lodash';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import React, { useState} from 'react';
+import { assign } from 'lodash';
 import { Button, Modal, Table, Divider } from 'antd';
 import profileService from './../../services/profileService/profileService';
 import Loading from './../loading/Loading';
@@ -14,44 +13,31 @@ import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
 
-const WorkspacesList = () => {
+const WorkspacesList = (props) => {
 
-  const [loading, setLoading] = useState(true);
-  const [visible, setVisible] = useState(false);
-  const [workspaces, setWorkspaces] = useState(null);
-
-  useEffect(() => { 
-      const workspaces = profileService.getMyWorkspaces;
-      setWorkspaces(workspaces);
-      setLoading(false);
-  }, [visible,loading]);
-
-  /*
-  const removeWorkspace = async (holiday) => {
-    try {
-      await profileService.removeWorkspace(holiday.id);
-    }
-    catch(error) {
-      throw(error);
-    }
-    setLoading(true);
-  }
-  */
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(!profileService.getMyWorkspaces.length);
+  const [workspaces, setWorkspaces] = useState(profileService.getMyWorkspaces);
 
   const onSubmitCreateWs = async (data) => {
+    setLoading(true);
     try {
-      await profileService.createWorkspaces(data);
+      const wsId = await profileService.createWorkspaces(data);
       await profileService.fetchMyWorkspaces();
+      setWorkspaces(profileService.getMyWorkspaces);
+      localStorage.setItem("currentWs", wsId.createWorkspace.ws.name);
+      props.setWsId(wsId.createWorkspace.ws.id);
     }
     catch(error) {
       throw(error);
     }
+    setLoading(false);
     setVisible(false);
+    history.push(`/main/workspace/${localStorage.getItem("currentWs")}/info`);
   }
 
   const listWorkspaces = () => {
     const data = workspaces.map(item => assign({}, item, {key: item.id}));
-    console.log(data);
     const columns = [
       {
         title: 'Name',
@@ -75,7 +61,8 @@ const WorkspacesList = () => {
                     type='link'
                     onClick={() => {
                       localStorage.setItem("currentWs", record.name);
-                      history.push('/');}
+                      props.setWsId(profileService.getWs.id);
+                      history.push(`/main/workspace/${localStorage.getItem('currentWs')}/info`);}
                     }
                   >
                     Goto
@@ -87,7 +74,6 @@ const WorkspacesList = () => {
                     type='link' 
                     onClick={() => {
                       console.log('Delete');
-                      // removeWorkspace(record);
                     }}
                   >
                     Delete
@@ -161,16 +147,16 @@ const WorkspacesList = () => {
   }
 
   if (loading) return <Loading />
-    return  (
-      <>
-      <div className="nd-workspaces-list-wrapper">
-        { listWorkspaces() }
-        { visible && createWS() }
-        <br />
-        <Button type='primary' onClick={() => setVisible(true)}>Add Workspace</Button>
-      </div>
-      </>
-    )
+  return  (
+    <>
+    <div className="nd-workspaces-list-wrapper">
+      { listWorkspaces() }
+      { (visible || !workspaces.length) && createWS() }
+      <br />
+      <Button type='primary' onClick={() => setVisible(true)}>Add Workspace</Button>
+    </div>
+    </>
+  )
 }  
 
 export default WorkspacesList;

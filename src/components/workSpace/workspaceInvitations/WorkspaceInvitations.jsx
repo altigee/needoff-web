@@ -6,6 +6,7 @@ import DatePickerForm from './../../form/datePickerForm/DatePickerForm';
 import InputForm from './../../form/inputForm/InputForm';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
+import { format } from './../../utils/date';
 import Loading from './../../loading/Loading';
 
 import './../styles.scss';
@@ -26,7 +27,6 @@ const WorkspaceInvitations = () => {
         const currentWs = profileService.getWs;
         setCurrentWs(currentWs);
         const users = await profileService.getWSMembersInvitations(currentWs.id);
-        console.log(users.workspaceInvitations);
         setUsers(users.workspaceInvitations);
       }
       catch(error) {
@@ -34,17 +34,20 @@ const WorkspaceInvitations = () => {
       }
       setLoading(false);
     })();
-  },[loading]);
+  },[]);
 
-  const onSubmit = async (data) => {
-    const startdate = data.date.format('YYYY-MM-DD');
+  const onSubmit = async ({ date, email }) => {
+    const startdate = format(date);
     setLoading(true);
     try {
-      await profileService.addWorkspaceMember(data.email, currentWs.id, startdate);
+      await profileService.addWorkspaceMember(email, currentWs.id, startdate);
+      const users = await profileService.getWSMembersInvitations(currentWs.id);
+      setUsers(users.workspaceInvitations);
     }
     catch(error) {
       throw(error);
     }
+    setLoading(false);
     setVisible(false);
   }
 
@@ -110,17 +113,19 @@ const WorkspaceInvitations = () => {
   }
 
   const removeUser = async (record) => {
+    setLoading(true);
     try {
       await profileService.removeWorkspaceMember(record.email, currentWs.id);
+      const users = await profileService.getWSMembersInvitations(currentWs.id);
+      setUsers(users.workspaceInvitations);
     }
     catch(error) {
       throw(error);
     }
-    setLoading(true);
+    setLoading(false);
   }
 
   const listMembers = () => {
-    // console.log(users);
     const data = users.map(
       item => assign(
         {},

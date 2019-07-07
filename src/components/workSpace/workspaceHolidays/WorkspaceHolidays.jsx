@@ -20,20 +20,6 @@ const WorkspaceHolidays = () => {
   const [loading, setLoading] = useState(true);
   const [currentWs, setCurrentWs] = useState(null);
   const [holidays, setHolidays] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
-
-  useEffect (() => {
-    (async() => {
-      try {
-        const userInfo = await profileService.getUserInfo();
-        console.log(userInfo);
-        setUserInfo(userInfo);
-      }
-      catch(error) {
-        throw(error);
-      }
-    })();
-  },[]);
 
   useEffect (() => {
     (async() => {
@@ -42,31 +28,39 @@ const WorkspaceHolidays = () => {
         setCurrentWs(currentWs);
         const holidayDays = await profileService.getHolidayData(currentWs.id);
         setHolidays(holidayDays.workspaceDates);
-        console.log(holidays);
       }
       catch(error) {
         throw(error);
       }
       setLoading(false);
     })();
-  },[visible, loading]);
+  },[visible]);
 
   const removeHoliday = async (holiday) => {
+    setLoading(true);
     try {
       await profileService.removeHoliday(holiday.id);
+      const holidayDays = await profileService.getHolidayData(currentWs.id);
+      setHolidays(holidayDays.workspaceDates);
     }
     catch(error) {
       throw(error);
     }
-    setLoading(true);
+    setLoading(false);
   }
 
   const onSubmitHoliday = async (data) => {
-    await profileService.addHoliday(data, currentWs.id);
-    console.log(data);
+    setLoading(true);
+    try {
+      await profileService.addHoliday(data, currentWs.id);
+      const holidayDays = await profileService.getHolidayData(currentWs.id);
+      setHolidays(holidayDays.workspaceDates);
+    }
+    catch(error) {
+      throw(error);
+    }
+    setLoading(false);
     setVisible(false);
-    const holidayDays = await profileService.getHolidayData(currentWs.id);
-    setHolidays(holidayDays.workspaceDates);
   }
 
   const listHolidays = () => {
@@ -164,6 +158,12 @@ const WorkspaceHolidays = () => {
                 <br />
                 <br />
                 <Button type="primary" htmlType="submit">Ok</Button>
+                <Button 
+                  type="secondary" 
+                  onClick={() => setVisible(false)}
+                >
+                  Cancel
+                </Button>
               </div>
             </form>
           )}

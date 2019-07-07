@@ -8,7 +8,7 @@ import authService from './services/authService/authService';
 export default class Routes extends Component {
   
   render() {
-    return authService.getStatus()
+    return authService.getToken()
       ? this.renderAuthedRoutes()
       : this.renderUnAuthedRoutes()
   }

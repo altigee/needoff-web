@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { assign } from 'lodash';
 import profileService from './../../../services/profileService/profileService';
 import { Button, Table } from 'antd';
@@ -14,25 +14,10 @@ import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
 
-const WorkspaceInfo = (props) => {
+const WorkspaceInfo = () => {
 
-  const [loading, setLoading] = useState(true);
-  const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
-
-  useEffect(() => {
-    (async() => {
-      try {
-        const userInfo = await profileService.getUserInfo();
-        console.log(userInfo);
-        setUserInfo(userInfo);
-      }
-      catch (error) {
-        throw(error);
-      }
-      setLoading(false);
-    })();
-  },[]);
 
   const wsInfo = (name, description, paid, unpaid, sick) => {
     const data = [];
@@ -74,22 +59,24 @@ const WorkspaceInfo = (props) => {
   }
 
   const onUpdateWorkspace = async(data) => {
-    console.log(data);
     setLoading(true);
     try {
       await profileService.updateWorkspaceInfo(data, id);
       localStorage.setItem("currentWs", data.name);
+      await profileService.fetchMyWorkspaces();
     }
     catch(error) {
       throw(error);
     }
-    setEdit(false)
-    history.push(`/`);
+    setEdit(false);
+    setLoading(false);
+    const currentWs = localStorage.getItem("currentWs");
+    history.push(`/main/workspace/${currentWs}/info`);
   }
 
   if (loading) return <Loading />;
   const { name, description, id } = profileService.getWs;
-  const { firstName, lastName, email } = userInfo.profile;
+  const { firstName, lastName, email } = profileService.user;
   return (
     <>
       <div className="nd-workspace-info-owner">
