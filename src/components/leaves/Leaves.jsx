@@ -24,7 +24,6 @@ const Leaves = props => {
   useEffect(() => {
     (async () => {
       try {
-        console.log(profileService.getWs.id);
         const [userBalance, vacations, users] = await Promise.all([
           profileService.getMyBalance(profileService.getWs.id),
           profileService.getVacationDays(profileService.getWs.id),

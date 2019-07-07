@@ -26,7 +26,6 @@ const WorkspaceMembers = () => {
           profileService.getWs.id
         );
         setUsers(users.workspaceMembers);
-        console.log('kkkk');
       } catch (error) {
         throw error;
       }
@@ -140,7 +139,6 @@ const WorkspaceMembers = () => {
         title: 'Action',
         key: 'action',
         render: record => {
-          console.log(profileService.owner);
           return (
             <>
               <span>

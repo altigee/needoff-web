@@ -61,7 +61,6 @@ const WorkspaceHolidays = () => {
 
   const listHolidays = () => {
     const data = holidays.map(item => assign({}, item, { key: item.id }));
-    console.log(data);
     const columns = [
       {
         title: 'Name',
@@ -96,7 +95,6 @@ const WorkspaceHolidays = () => {
   };
 
   const addHoliday = () => {
-    console.log('add holiday');
     return (
       <>
         <Modal title="Add Holiday Date" visible={visible} footer={null}>

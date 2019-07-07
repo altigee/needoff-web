@@ -1,20 +1,23 @@
 .ant-fullcalendar-content {
   span {
     font-size: 40px;
-    // user-select: none;
 
     &.holiday-date {
       color: red;
     }
+
     &.vacation-paid {
       color: green;
     }
+
     &.vacation-unpaid {
       color: orange;
     }
+
     &.vacation-sick {
       color: plum;
     }
+
     &.vacation-wfh {
       color: purple;
     }

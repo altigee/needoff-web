@@ -4,12 +4,10 @@ import profileService from './../profileService/profileService';
 import AUTH_ROUTES from './../../components/auth/auth.routes';
 import MAIN_ROUTES from './../../components/mainMenu/main.routes';
 
-// export const endpoint = "http://nmarchuk.pythonanywhere.com/graphql";
 export const endpoint = 'http://localhost:3344/graphql';
 
 class AuthService {
   login = async ({ login, password }) => {
-    console.log(login);
     const mutation = `mutation {
       login(email: "${login}", password:"${password}") {
         accessToken
@@ -22,7 +20,6 @@ class AuthService {
       localStorage.setItem('email', login);
       history.push(MAIN_ROUTES.WORKSPACES);
     } catch (error) {
-      console.log(error);
       history.push(AUTH_ROUTES.LOGIN);
     }
   };
@@ -48,7 +45,6 @@ class AuthService {
       localStorage.setItem('email', login);
       history.push(MAIN_ROUTES.WORKSPACES);
     } catch (error) {
-      console.log(error);
       history.push(AUTH_ROUTES.SIGNUP);
     }
   };
