@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { assign } from 'lodash';
-import profileService from './../../../services/profileService/profileService';
 import { Button, Modal, Table } from 'antd';
-import DatePickerForm from './../../form/datePickerForm/DatePickerForm';
-import InputForm from './../../form/inputForm/InputForm';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
+
+import profileService from './../../../services/profileService/profileService';
+import DatePickerForm from './../../form/datePickerForm/DatePickerForm';
+import InputForm from './../../form/inputForm/InputForm';
 import { format } from './../../utils/date';
+import sendNotification from './../../notifications/notifications';
 import Loading from './../../loading/Loading';
 
 import './../styles.scss';
@@ -30,7 +32,7 @@ const WorkspaceInvitations = () => {
         );
         setUsers(users.workspaceInvitations);
       } catch (error) {
-        throw error;
+        sendNotification('error');
       }
       setLoading(false);
     })();
@@ -44,7 +46,7 @@ const WorkspaceInvitations = () => {
       const users = await profileService.getWSMembersInvitations(currentWs.id);
       setUsers(users.workspaceInvitations);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setLoading(false);
     setVisible(false);
@@ -113,7 +115,7 @@ const WorkspaceInvitations = () => {
       const users = await profileService.getWSMembersInvitations(currentWs.id);
       setUsers(users.workspaceInvitations);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setLoading(false);
   };

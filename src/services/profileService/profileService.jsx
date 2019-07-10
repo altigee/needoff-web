@@ -21,7 +21,7 @@ class profileService {
     return await (await response.json()).data;
   };
 
-  get getMyWorkspaces() {
+  get myWorkspaces() {
     return this.workspaces;
   }
 
@@ -351,6 +351,23 @@ class profileService {
         ok
       }
     }	
+    `;
+
+    return this.graphqlClient(query);
+  };
+
+  balanceByUser = async (wsId, userId) => {
+    const query = `
+    query {
+      balanceByUser(workspaceId: ${wsId}, userId: ${userId}) {
+        leftPaidLeaves
+        leftUnpaidLeaves
+        leftSickLeaves
+        totalPaidLeaves
+        totalUnpaidLeaves
+        totalSickLeaves
+      }
+    }		
     `;
 
     return this.graphqlClient(query);

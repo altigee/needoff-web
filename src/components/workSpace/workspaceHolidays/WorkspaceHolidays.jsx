@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { assign } from 'lodash';
-import profileService from './../../../services/profileService/profileService';
 import { Button, Modal, Table } from 'antd';
+import { Form, Field } from 'react-final-form';
+import createDecorator from 'final-form-focus';
+
+import profileService from './../../../services/profileService/profileService';
 import DatePickerForm from './../../form/datePickerForm/DatePickerForm';
 import CheckboxForm from './../../form/checkboxForm/CheckboxFom';
 import InputForm from './../../form/inputForm/InputForm';
-import { Form, Field } from 'react-final-form';
-import createDecorator from 'final-form-focus';
+import sendNotification from './../../notifications/notifications';
 import Loading from './../../loading/Loading';
 
 import './../styles.scss';
@@ -28,7 +30,7 @@ const WorkspaceHolidays = () => {
         const holidayDays = await profileService.getHolidayData(currentWs.id);
         setHolidays(holidayDays.workspaceDates);
       } catch (error) {
-        throw error;
+        sendNotification('error');
       }
       setLoading(false);
     })();
@@ -41,7 +43,7 @@ const WorkspaceHolidays = () => {
       const holidayDays = await profileService.getHolidayData(currentWs.id);
       setHolidays(holidayDays.workspaceDates);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setLoading(false);
   };
@@ -53,7 +55,7 @@ const WorkspaceHolidays = () => {
       const holidayDays = await profileService.getHolidayData(currentWs.id);
       setHolidays(holidayDays.workspaceDates);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setLoading(false);
     setVisible(false);

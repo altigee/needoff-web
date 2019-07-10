@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { assign } from 'lodash';
-import profileService from './../../../services/profileService/profileService';
-import { Button, Modal, Table, Divider } from 'antd';
-import DatePickerForm from './../../form/datePickerForm/DatePickerForm';
+import { assign, find } from 'lodash';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
+import {
+  Button,
+  Modal,
+  Icon,
+  Skeleton,
+  Avatar,
+  Card,
+  Row,
+  Col,
+  Table
+} from 'antd';
+import DatePickerForm from './../../form/datePickerForm/DatePickerForm';
+import sendNotification from './../../notifications/notifications';
+import profileService from './../../../services/profileService/profileService';
 import { format } from './../../utils/date';
 import Loading from './../../loading/Loading';
 
@@ -13,21 +24,30 @@ import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
 
+const { Meta } = Card;
+
 const WorkspaceMembers = () => {
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [visibleBalance, setVisibleBalance] = useState(false);
+  const [visibleDetails, setVisibleDetails] = useState(false);
   const [users, setUsers] = useState(null);
-  const [currentRecord, setCurrentRecord] = useState(null);
+  const [userById, setUserById] = useState(null);
+  const [leaveType, setLeaveType] = useState(null);
+  const [userBalance, setUserBalance] = useState(null);
+  const [vacations, setVacations] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const users = await profileService.getWSMembers(
-          profileService.getWs.id
-        );
+        const [vacations, users] = await Promise.all([
+          profileService.getVacationDays(profileService.getWs.id),
+          profileService.getWSMembers(profileService.getWs.id)
+        ]);
+        setVacations(vacations.teamCalendar);
         setUsers(users.workspaceMembers);
       } catch (error) {
-        throw error;
+        sendNotification('error');
       }
       setLoading(false);
     })();
@@ -39,13 +59,13 @@ const WorkspaceMembers = () => {
     try {
       await profileService.updateStartDate(
         profileService.getWs.id,
-        currentRecord.id,
+        userById,
         startdate
       );
       const users = await profileService.getWSMembers(profileService.getWs.id);
       setUsers(users.workspaceMembers);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setLoading(false);
     setVisible(false);
@@ -94,88 +114,231 @@ const WorkspaceMembers = () => {
     );
   };
 
-  const removeUser = async record => {
+  const removeUser = async user => {
+    setLoading(true);
     try {
       await profileService.removeWorkspaceMember(
-        record.email,
+        user.profile.email,
         profileService.getWs.id
       );
+      const users = await profileService.getWSMembers(profileService.getWs.id);
+      setUsers(users.workspaceMembers);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
-    setLoading(true);
+    setLoading(false);
+  };
+
+  const balanceByUser = () => {
+    console.log(userBalance);
+
+    return (
+      <>
+        <Modal
+          className="nd-modal-leaves"
+          visible={visibleBalance}
+          footer={null}
+          closable={false}
+          onCancel={() => {
+            setVisibleBalance(false);
+          }}
+        >
+          <Row gutter={16}>
+            <Col size="200" span={8}>
+              <Card
+                className="card card-color-green"
+                hoverable
+                title="Paid Leaves"
+                onClick={() => {
+                  setLeaveType('VACATION_PAID');
+                  console.log(leaveType);
+                  setVisibleDetails(true);
+                }}
+              >
+                <div className="card-leaves">
+                  {userBalance.leftPaidLeaves}/{userBalance.totalPaidLeaves}
+                </div>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card
+                className="card card-color-orange"
+                hoverable
+                title="Unpaid Leaves"
+                onClick={() => {
+                  setLeaveType('VACATION_UNPAID');
+                  console.log(leaveType);
+                  setVisibleDetails(true);
+                }}
+              >
+                <div className="card-leaves">
+                  {userBalance.leftUnpaidLeaves}/{userBalance.totalUnpaidLeaves}
+                </div>
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card
+                className="card card-color-red"
+                hoverable
+                title="Sick Leaves"
+                onClick={() => {
+                  setLeaveType('SICK_LEAVE');
+                  console.log(leaveType);
+                  setVisibleDetails(true);
+                }}
+              >
+                <div className="card-leaves">
+                  {userBalance.leftSickLeaves}/{userBalance.totalSickLeaves}
+                </div>
+              </Card>
+            </Col>
+          </Row>
+          <br /> <br />
+          <Button
+            type="primary"
+            onClick={() => {
+              setVisibleBalance(false);
+            }}
+          >
+            Cancel
+          </Button>
+        </Modal>
+      </>
+    );
   };
 
   const listMembers = () => {
-    const data = users.map(item =>
-      assign(
-        {},
-        {
-          id: item.userId,
-          key: item.userId,
-          email: item.profile.email,
-          date: item.startDate,
-          name: `${item.profile.firstName} ${item.profile.lastName}`
-        }
-      )
-    );
-    const columns = [
-      {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name'
-      },
-      {
-        title: 'Start Date',
-        dataIndex: 'date',
-        key: 'date'
-      },
-      {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email'
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        render: record => {
+    return (
+      <>
+        {users.map(item => {
           return (
-            <>
-              <span>
-                <span>
-                  <Button
-                    type="link"
+            <div key={item.userId}>
+              <Card
+                hoverable
+                actions={[
+                  <Icon
+                    type="edit"
                     onClick={() => {
-                      setCurrentRecord(record);
+                      setUserById(item.userId);
                       setVisible(true);
                     }}
-                  >
-                    Set start date
-                  </Button>
-                </span>
-                <Divider type="vertical" />
-                <span>
-                  {record.id !== profileService.owner.userId && (
-                    <Button type="link" onClick={() => removeUser(record)}>
-                      Delete
-                    </Button>
-                  )}
-                </span>
-              </span>
-            </>
+                  />,
+                  <Icon type="delete" onClick={() => removeUser(item)} />,
+                  <Icon
+                    type="info"
+                    onClick={async () => {
+                      setUserById(item.userId);
+                      try {
+                        const balance = await profileService.balanceByUser(
+                          profileService.getWs.id,
+                          item.userId
+                        );
+                        setUserBalance(balance.balanceByUser);
+                      } catch (error) {
+                        console.log(error);
+                      }
+                      setVisibleBalance(true);
+                    }}
+                  />
+                ]}
+              >
+                <Skeleton loading={loading} avatar active>
+                  <Meta
+                    avatar={
+                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                    }
+                    title={`${item.profile.firstName} ${item.profile.lastName}`}
+                  />
+                </Skeleton>
+                <br />
+                <p>
+                  <strong>Email: </strong>
+                  {item.profile.email}
+                </p>
+                <p>
+                  <strong>Start Date: </strong>
+                  {item.startDate}
+                </p>
+              </Card>
+            </div>
           );
-        }
+        })}
+      </>
+    );
+  };
+
+  const userLeaves = () => {
+    console.log(vacations);
+    console.log(leaveType);
+    const data = vacations
+      .filter(
+        item => item.userId === Number(userById) && item.leaveType === leaveType
+      )
+      .map(item =>
+        assign(
+          {},
+          {
+            id: item.id,
+            key: item.id,
+            startDate: item.startDate,
+            endDate: item.endDate,
+            leaveType: item.leaveType,
+            comment: item.comment
+          }
+        )
+      );
+    // console.log(data);
+    const columns = [
+      {
+        title: 'Start Date',
+        dataIndex: 'startDate',
+        key: 'startDate'
+      },
+      {
+        title: 'End Date',
+        dataIndex: 'endDate',
+        key: 'endDate'
+      },
+      {
+        title: 'Comment',
+        dataIndex: 'comment',
+        key: 'comment'
       }
     ];
-
-    return <Table dataSource={data} columns={columns} pagination={false} />;
+    const currentUser = find(users, {
+      userId: userById
+    });
+    return (
+      <Modal
+        title={`${currentUser.profile.firstName} ${currentUser.profile.lastName}`}
+        className="nd-modal-leaves"
+        visible={visibleDetails}
+        footer={null}
+        closable={false}
+      >
+        <div className="nd-table nd-leaves-intro-wrapper">
+          <Table
+            size="small"
+            dataSource={data}
+            columns={columns}
+            pagination={false}
+          />
+          <br /> <br />
+          <Button type="primary" onClick={() => setVisibleDetails(false)}>
+            Cancel
+          </Button>
+        </div>
+      </Modal>
+    );
   };
 
   if (loading) return <Loading />;
   return (
     <div className="nd-workspace-invitations-wrapper">
       {visible && updateStartDate()}
+      {userById && visibleBalance && balanceByUser()}
       {listMembers()}
+      {userById && visibleDetails && userLeaves()}
       <br />
     </div>
   );

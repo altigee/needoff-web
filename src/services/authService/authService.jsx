@@ -1,5 +1,5 @@
-import history from './../../components/router/history';
 import { request } from 'graphql-request';
+import history from './../../components/router/history';
 import profileService from './../profileService/profileService';
 import AUTH_ROUTES from './../../components/auth/auth.routes';
 import MAIN_ROUTES from './../../components/mainMenu/main.routes';

@@ -1,37 +1,90 @@
 .nd-main-wrapper {
-  display: flex;
-  border-top: 1px solid #bbbbbb;
-  border-bottom: 1px solid #bbbbbb;
-  background-color: #dddddd;
+  max-width: 1000px;
+  margin: 0 54px;
+  border-right: 1px solid #bbbbbb;
+  border-left: 1px solid #bbbbbb;
 
-  button.ant-btn-link {
-    color: black;
-    border-radius: 0;
+  .nd-main-menu-sider {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-bottom: 24px;
+    border-right: none;
+    background-color: #e9eae8;
 
-    &:hover {
-      border-radius: none;
-      background-color: #bbbbbb;
+    li.ant-menu-item {
+      margin: 0 0 8px 0;
+
+      &.ant-menu-item-active {
+        background-color: #e6f7ff;
+      }
+
+      &.logout {
+        margin-top: auto;
+      }
+
+      &-selected::after {
+        display: none;
+      }
+
+      .nd-main-menu-sider-item a,
+      .nd-main-menu-sider-item button {
+        display: inline-block;
+        width: 100%;
+        height: 40px;
+        padding: 0;
+        line-height: 40px;
+        text-align: left;
+      }
     }
 
-    &.nd-btn-current-ws {
-      margin-left: auto;
-      color: #1890ff;
+    .ant-badge {
+      width: 100%;
+
+      .ant-badge-count {
+        top: 20px;
+        right: 10px;
+        width: 16px;
+        min-width: 16px;
+        height: 16px;
+        min-height: 16px;
+        padding: 0;
+        font-size: 10px;
+
+        p.current {
+          height: 16px;
+          line-height: 16px;
+        }
+      }
     }
   }
 
-  .ant-badge .ant-badge-count {
-    top: 8px;
-    right: 8px;
-    width: 16px;
-    min-width: 16px;
-    height: 16px;
-    min-height: 16px;
-    padding: 0;
-    font-size: 10px;
+  .nd-main-menu-content {
+    height: 100vh;
+  }
+}
 
-    p.current {
-      height: 16px;
-      line-height: 16px;
+.nd-table {
+  .ant-table-wrapper {
+    .ant-table-content {
+      border: 1px solid #bbbbbb;
+      border-radius: 4px;
+    }
+  }
+
+  .ant-table .ant-table-body {
+    margin: 0;
+  }
+
+  .ant-table-row {
+    background-color: #ffffff;
+
+    .ant-btn {
+      padding: 0;
+
+      &:hover {
+        color: darkblue;
+      }
     }
   }
 }

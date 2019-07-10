@@ -1,15 +1,16 @@
 .nd-workspace-wrapper {
-  padding-top: 24px;
-  background-color: #eee;
+  padding: 0 48px 48px;
+
+  .ant-tabs-bar {
+    margin: 0;
+    border-bottom: none;
+
+    .ant-tabs-nav-container {
+      margin-bottom: 32px;
+    }
+  }
 
   .nd-workspace-info-wrapper {
-    padding: 24px;
-    border-top: 1px solid #bbb;
-
-    .ant-table-row {
-      background-color: #ddd;
-    }
-
     input,
     textarea {
       width: 50vw;
@@ -18,27 +19,18 @@
     textarea {
       resize: none;
     }
-  }
 
-  .nd-workspace-info-owner {
-    text-align: right;
-    padding: 5px 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    .ant-btn + .ant-btn {
+      margin-left: 16px;
+    }
   }
 
   .nd-workspace-invitations-wrapper {
-    padding: 24px;
-    border-top: 1px solid #bbb;
-    background-color: #eee;
-
     .ant-table-row {
-      background-color: #ddd;
-
       td {
         padding: 4px 16px;
       }
+
       .ant-btn {
         padding: 0;
 
@@ -46,6 +38,55 @@
           color: darkblue;
         }
       }
+    }
+
+    .ant-card {
+      width: 60%;
+      margin: 16px 0;
+
+      .ant-card-body {
+        padding: 16px 16px 0 16px;
+      }
+    }
+  }
+}
+
+.nd-modal-leaves {
+  .ant-modal-content {
+    width: 580px;
+
+    .card {
+      text-align: center;
+
+      &:hover {
+        background-color: #e6f7ff;
+      }
+    }
+
+    .card-color-green {
+      .ant-card-head,
+      .ant-card-body {
+        color: green;
+      }
+    }
+
+    .card-color-orange {
+      .ant-card-head,
+      .ant-card-body {
+        color: orange;
+      }
+    }
+
+    .card-color-red {
+      .ant-card-head,
+      .ant-card-body {
+        color: red;
+      }
+    }
+
+    .card-leaves {
+      font-size: 20px;
+      text-align: center;
     }
   }
 }

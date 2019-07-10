@@ -19,7 +19,10 @@ export default class AuthLayout extends Component {
 
     return (
       <div className={classes}>
-        <div className="outer-children-page">{this.props.children}</div>
+        <div className="outer-children-page">
+          <div className="nd-logo">Needoff Logo</div>
+          {this.props.children}
+        </div>
       </div>
     );
   }

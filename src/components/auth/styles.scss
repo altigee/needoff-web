@@ -1,7 +1,7 @@
 .auth-wrap {
-  width: 320px;
-  padding: 24px;
+  padding: 40px;
   border: 1px solid #bbbbbb;
+  border-radius: 4px;
   background-color: #eeeeee;
 
   form {
@@ -11,6 +11,7 @@
   }
 
   &-input {
+    // width: 240px;
     margin-bottom: 16px;
   }
 
@@ -21,10 +22,12 @@
   }
 
   &.auth-wrap-login {
+    width: 320px;
     height: 280px;
   }
 
   &.auth-wrap-signup {
+    width: 320px;
     height: 450px;
   }
 }

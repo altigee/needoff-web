@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { assign } from 'lodash';
-import profileService from './../../services/profileService/profileService';
 import { Button, Table, Modal, Divider } from 'antd';
+
+import profileService from './../../services/profileService/profileService';
+import sendNotification from './../notifications/notifications';
 import Loading from './../loading/Loading';
 
 import './styles.scss';
@@ -19,7 +21,7 @@ const Todo = props => {
         );
         setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
       } catch (error) {
-        throw error;
+        sendNotification('error');
       }
       setLoading(false);
     })();
@@ -43,7 +45,7 @@ const Todo = props => {
             setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
             props.setCount(approvalDaysOff.dayOffsForApproval.length);
           } catch (error) {
-            throw error;
+            sendNotification('error');
           }
         })();
       },
@@ -157,7 +159,7 @@ const Todo = props => {
   if (loading) return <Loading />;
   return (
     <>
-      <div className="nd-todo-wrapper">
+      <div className="nd-table nd-todo-wrapper">
         {approvalDaysOff && showRequestsForApprove()}
       </div>
     </>

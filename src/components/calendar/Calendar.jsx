@@ -3,6 +3,7 @@ import { Calendar as CalendarAntd, Alert } from 'antd';
 import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import { format, FORMATS } from './../utils/date';
+import sendNotification from './../notifications/notifications';
 import './styles.scss';
 
 const Calendar = () => {
@@ -23,7 +24,7 @@ const Calendar = () => {
         setHolidays(holidays.workspaceDates);
         setVacations(vacations.teamCalendar);
       } catch (error) {
-        throw error;
+        sendNotification('error');
       }
       setLoading(false);
     })();

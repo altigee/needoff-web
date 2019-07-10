@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { assign } from 'lodash';
-import profileService from './../../services/profileService/profileService';
 import { Button, Table, Modal } from 'antd';
+import { Form, Field } from 'react-final-form';
+import createDecorator from 'final-form-focus';
+
+import profileService from './../../services/profileService/profileService';
 import DatePickerForm from './../form/datePickerForm/DatePickerForm';
 import SelectForm from './../form/selectForm/SelectForm';
 import InputForm from './../form/inputForm/InputForm';
 import Loading from './../loading/Loading';
-import { Form, Field } from 'react-final-form';
-import createDecorator from 'final-form-focus';
+import sendNotification from './../notifications/notifications';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -33,7 +35,7 @@ const Leaves = props => {
         setVacations(vacations.teamCalendar);
         setUsers(users.workspaceMembers);
       } catch (error) {
-        throw error;
+        sendNotification('error');
       }
       setLoading(false);
     })();
@@ -78,7 +80,7 @@ const Leaves = props => {
       }
     ];
     return (
-      <div className="nd-leaves-wrapper">
+      <div className="nd-table nd-leaves-wrapper">
         <Table dataSource={data} columns={columns} pagination={false} />
         <br />
         <Button type="primary" onClick={() => setVisible(true)}>
@@ -140,7 +142,7 @@ const Leaves = props => {
         }
       ];
       return (
-        <div className="nd-leaves-intro-wrapper">
+        <div className="nd-table nd-leaves-intro-wrapper">
           <Table
             size="small"
             dataSource={data}
@@ -175,7 +177,7 @@ const Leaves = props => {
       }
     ];
     return (
-      <div className="nd-leaves-wrapper">
+      <div className="nd-table nd-leaves-wrapper">
         <div>{listName}</div>
         <Table
           size="small"
@@ -213,7 +215,7 @@ const Leaves = props => {
       setUserBalance(userBalance.myBalance);
       setVacations(vacations.teamCalendar);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setLoading(false);
     setVisible(false);

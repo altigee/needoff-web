@@ -1,63 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Tabs } from 'antd';
 
-import { Button } from 'antd';
 import history from './../router/history';
-import { Route, Switch } from 'react-router-dom';
 import WorkspaceInfo from './workspaceInfo/WorkspaceInfo';
 import WorkspaceMembers from './workspaceMembers/WorkspaceMembers';
-import WorspaceInvitations from './workspaceInvitations/WorkspaceInvitations';
-import WorspaceHolidays from './workspaceHolidays/WorkspaceHolidays';
-import WORKSPACE_ROUTES from './workspace.routes';
+import WorkspaceInvitations from './workspaceInvitations/WorkspaceInvitations';
+import WorkspaceHolidays from './workspaceHolidays/WorkspaceHolidays';
+import profileService from './../../services/profileService/profileService';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
 
+const { TabPane } = Tabs;
+
 const Workspace = () => {
-  const currentWs = localStorage.getItem('currentWs');
-  return (
-    <>
-      <div className="nd-workspace-wrapper">
-        <Button
-          type="link"
-          onClick={() => history.push(`/main/workspace/${currentWs}/info`)}
-        >
-          Info
-        </Button>
-        <Button
-          type="link"
-          onClick={() =>
-            history.push(`/main/workspace/${currentWs}/invitations`)
-          }
-        >
-          Invitations
-        </Button>
-        <Button
-          type="link"
-          onClick={() => history.push(`/main/workspace/${currentWs}/members`)}
-        >
-          Members
-        </Button>
-        <Button
-          type="link"
-          onClick={() => history.push(`/main/workspace/${currentWs}/holidays`)}
-        >
-          Holidays
-        </Button>
-        <br />
-        <Switch>
-          <Route path={WORKSPACE_ROUTES.INFO} component={WorkspaceInfo} />
-          <Route path={WORKSPACE_ROUTES.MEMBERS} component={WorkspaceMembers} />
-          <Route
-            path={WORKSPACE_ROUTES.INVITATIONS}
-            component={WorspaceInvitations}
-          />
-          <Route
-            path={WORKSPACE_ROUTES.HOLIDAYS}
-            component={WorspaceHolidays}
-          />
-        </Switch>
+  const [currentTab, setCurrentTab] = useState('info');
+
+  const activeTab = currentTab || 'info';
+
+  const onTabChange = tab => {
+    setCurrentTab(tab);
+    history.push(`/main/workspace/${profileService.getWs.id}/${tab}`);
+  };
+
+  const renderTab = Component => {
+    return (
+      <div className="nd-table nd-workspace-tab">
+        <Component />
       </div>
-    </>
+    );
+  };
+
+  return (
+    <div className="nd-workspace-wrapper">
+      <Tabs
+        activeKey={activeTab}
+        defaultActiveKey="workspaceInfo"
+        onChange={onTabChange}
+      >
+        <TabPane tab="Info" key="info">
+          {activeTab === 'info' && renderTab(WorkspaceInfo)}
+        </TabPane>
+        <TabPane tab="Invitations" key="invitations">
+          {activeTab === 'invitations' && renderTab(WorkspaceInvitations)}
+        </TabPane>
+        <TabPane tab="Members" key="members">
+          {activeTab === 'members' && renderTab(WorkspaceMembers)}
+        </TabPane>
+        <TabPane tab="Holidays" key="holidays">
+          {activeTab === 'holidays' && renderTab(WorkspaceHolidays)}
+        </TabPane>
+      </Tabs>
+    </div>
   );
 };
 

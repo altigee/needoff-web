@@ -1,8 +1,8 @@
 export const WORKSPACE_ROUTES = {
-  INFO: '/main/workspace/:currentWs/info',
-  MEMBERS: '/main/workspace/:currentWs/members',
-  INVITATIONS: '/main/workspace/:currentWs/invitations',
-  HOLIDAYS: '/main/workspace/:currentWs/holidays'
+  INFO: '/main/workspace/:id/info',
+  MEMBERS: '/main/workspace/:id/members',
+  INVITATIONS: '/main/workspace/:id/invitations',
+  HOLIDAYS: '/main/workspace/:id/holidays'
 };
 
 export default WORKSPACE_ROUTES;

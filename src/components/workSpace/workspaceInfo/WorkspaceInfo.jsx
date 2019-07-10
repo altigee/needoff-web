@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { assign } from 'lodash';
-import profileService from './../../../services/profileService/profileService';
 import { Button, Table } from 'antd';
+import { Form, Field } from 'react-final-form';
+import createDecorator from 'final-form-focus';
+
+import profileService from './../../../services/profileService/profileService';
 import history from './../../router/history';
 import InputForm from './../../form/inputForm/InputForm';
 import TextAreaForm from './../../form/inputTextArea/InputTextArea';
 import Loading from './../../loading/Loading';
-import { Form, Field } from 'react-final-form';
-import createDecorator from 'final-form-focus';
+import sendNotification from './../../notifications/notifications';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
@@ -33,12 +35,12 @@ const WorkspaceInfo = () => {
         key: 'description'
       },
       {
-        title: 'Paid vacation days per year',
+        title: 'Paid vacation',
         dataIndex: 'paid',
         key: 'paid'
       },
       {
-        title: 'Unpaid vacation days per year',
+        title: 'Unpaid vacation',
         dataIndex: 'unpaid',
         key: 'unpaid'
       },
@@ -66,7 +68,7 @@ const WorkspaceInfo = () => {
       localStorage.setItem('currentWs', data.name);
       await profileService.fetchMyWorkspaces();
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setEdit(false);
     setLoading(false);
@@ -76,18 +78,9 @@ const WorkspaceInfo = () => {
 
   if (loading) return <Loading />;
   const { name, description, id } = profileService.getWs;
-  const { firstName, lastName, email } = profileService.user;
+
   return (
     <>
-      <div className="nd-workspace-info-owner">
-        <label>
-          <strong>Owner: </strong>
-        </label>
-        <span>
-          {' '}
-          {firstName} {lastName} ({email})
-        </span>
-      </div>
       {!edit && wsInfo(name, description, 0, 0, 0)}
       {edit && (
         <div className="nd-workspace-info-wrapper">
@@ -125,9 +118,9 @@ const WorkspaceInfo = () => {
                       rows={3}
                     />
                   </div>
-                  <br /> <br /> <br />
+                  <br /> <br />
                   <div>
-                    <label>Paid vacation days per year</label>
+                    <label>Paid vacation</label>
                     <br />
                     <Field
                       name="paidDays"
@@ -137,7 +130,7 @@ const WorkspaceInfo = () => {
                     <br />
                   </div>
                   <div>
-                    <label>Unpaid vacation days per year</label>
+                    <label>Unpaid vacation</label>
                     <br />
                     <Field
                       name="unpaidDays"
@@ -147,7 +140,7 @@ const WorkspaceInfo = () => {
                   </div>
                   <br />
                   <div>
-                    <label>Sick leaves per year</label>
+                    <label>Sick leaves</label>
                     <br />
                     <Field
                       name="sickDays"

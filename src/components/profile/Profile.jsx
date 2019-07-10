@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { assign } from 'lodash';
-import profileService from './../../services/profileService/profileService';
 import { Button, Table } from 'antd';
+import { Form, Field } from 'react-final-form';
+import createDecorator from 'final-form-focus';
+import profileService from './../../services/profileService/profileService';
 import history from './../router/history';
 import InputForm from './../form/inputForm/InputForm';
 import Loading from './../loading/Loading';
-import { Form, Field } from 'react-final-form';
-import createDecorator from 'final-form-focus';
+import sendNotification from './../notifications/notifications';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -50,7 +51,7 @@ const Profile = () => {
       }
     ];
     return (
-      <div className="nd-profile-wrapper">
+      <div className="nd-table nd-profile-wrapper">
         <Table dataSource={data} columns={columns} pagination={false} />
         <br />
         <Button type="primary" onClick={() => setEdit(true)}>
@@ -65,7 +66,7 @@ const Profile = () => {
     try {
       // await profileService.updateWorkspaceInfo(data, id); query doesn't exist now
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setEdit(false);
     history.push(`/`);

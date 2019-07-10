@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { assign } from 'lodash';
-import { Button, Modal, Table, Divider } from 'antd';
-import profileService from './../../services/profileService/profileService';
-import Loading from './../loading/Loading';
+import { Button, Modal, Card } from 'antd';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
+
+import Loading from './../loading/Loading';
+import profileService from './../../services/profileService/profileService';
 import history from './../router/history';
+import sendNotification from './../notifications/notifications';
 import InputForm from './../form/inputForm/InputForm';
 
 import './styles.scss';
@@ -15,81 +17,50 @@ const focusOnError = createDecorator();
 
 const WorkspacesList = props => {
   const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(
-    !profileService.getMyWorkspaces.length
-  );
-  const [workspaces, setWorkspaces] = useState(profileService.getMyWorkspaces);
+  const [visible, setVisible] = useState(!profileService.myWorkspaces.length);
+  const [workspaces, setWorkspaces] = useState(profileService.myWorkspaces);
 
   const onSubmitCreateWs = async data => {
     setLoading(true);
     try {
       const wsId = await profileService.createWorkspaces(data);
       await profileService.fetchMyWorkspaces();
-      setWorkspaces(profileService.getMyWorkspaces);
+      setWorkspaces(profileService.myWorkspaces);
       localStorage.setItem('currentWs', wsId.createWorkspace.ws.name);
       props.setWsId(wsId.createWorkspace.ws.id);
     } catch (error) {
-      throw error;
+      sendNotification('error');
     }
     setLoading(false);
     setVisible(false);
-    history.push(`/main/workspace/${localStorage.getItem('currentWs')}/info`);
+    history.push(`/main/workspace/${profileService.getWs.id}/info`);
   };
 
   const listWorkspaces = () => {
     const data = workspaces.map(item => assign({}, item, { key: item.id }));
-    const columns = [
-      {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name'
-      },
-      {
-        title: 'Description',
-        dataIndex: 'description',
-        key: 'description'
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        render: record => {
+    console.log(data);
+
+    return (
+      <>
+        {data.map(item => {
           return (
-            <>
-              <span>
-                <span>
-                  <Button
-                    type="link"
-                    onClick={() => {
-                      localStorage.setItem('currentWs', record.name);
-                      props.setWsId(profileService.getWs.id);
-                      history.push(
-                        `/main/workspace/${localStorage.getItem(
-                          'currentWs'
-                        )}/info`
-                      );
-                    }}
-                  >
-                    Goto
-                  </Button>
-                </span>
-                <Divider type="vertical" />
-                <span>
-                  <Button
-                    type="link"
-                    onClick={() => {
-                      console.log('Delete');
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </span>
-              </span>
-            </>
+            <div key={item.id} className="nd-card">
+              <Card
+                size="small"
+                hoverable
+                onClick={() => {
+                  localStorage.setItem('currentWs', item.name);
+                  props.setWsId(profileService.getWs.id);
+                  history.push(`/main/workspace/${item.id}/info`);
+                }}
+              >
+                <p className="card-name">{item.name}</p>
+              </Card>
+            </div>
           );
-        }
-      }
-    ];
-    return <Table dataSource={data} columns={columns} pagination={false} />;
+        })}
+      </>
+    );
   };
 
   const createWS = () => {
@@ -146,7 +117,7 @@ const WorkspacesList = props => {
   if (loading) return <Loading />;
   return (
     <>
-      <div className="nd-workspaces-list-wrapper">
+      <div className="nd-table nd-workspaces-list-wrapper">
         {listWorkspaces()}
         {(visible || !workspaces.length) && createWS()}
         <br />
