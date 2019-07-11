@@ -1,0 +1,13 @@
+.nd-todo-wrapper {
+  padding: 24px;
+
+  .ant-table-row {
+    .ant-btn {
+      padding: 0;
+
+      &:hover {
+        color: darkblue;
+      }
+    }
+  }
+}

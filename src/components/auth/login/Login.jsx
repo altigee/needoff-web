@@ -1,64 +1,61 @@
 import React, { Component } from 'react';
-
-import { Button } from 'antd';
-import InputForm from './../../../components/inputForm/InputForm';
-
-import AuthLayout from '../../auth-layout/AuthLayout';
-import history from '../../router/history';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
-// import { request } from 'graphql-request';
-import authService from './../../authService/authService';
+import { Button } from 'antd';
+
+import InputForm from './../../form/inputForm/InputForm';
+import AuthLayout from '../../auth/authLayout/AuthLayout';
+import history from '../../router/history';
+import authService from './../../../services/authService/authService';
 
 import './../styles.scss';
-import 'antd/dist/antd.css'; 
+import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
 
 export default class Login extends Component {
-
- onSubmit = authService.login;
+  onSubmit = authService.login;
 
   render() {
     return (
       <AuthLayout>
-        <div className="auth-wrap">
-          <Form 
+        <div className="auth-wrap auth-wrap-login">
+          <Form
             onSubmit={this.onSubmit}
             decorators={[focusOnError]}
             validate={values => {
               const errors = {};
               if (!values.login) {
-                errors.login = "Required";
+                errors.login = 'Required';
               }
               if (!values.password) {
-                errors.password = "Required";
+                errors.password = 'Required';
               }
               return errors;
             }}
           >
-            {(
-              {handleSubmit}) => (
+            {({ handleSubmit }) => (
               <form onSubmit={handleSubmit}>
-                <div className='auth-wrap-input'>
+                <div className="auth-wrap-input">
                   <label>Login</label>
-                  <Field 
+                  <Field
                     name="login"
                     component={InputForm}
                     placeholder="Enter your login"
                   />
                 </div>
-                <div className='auth-wrap-input'>
+                <div className="auth-wrap-input">
                   <label>Password</label>
-                  <Field 
+                  <Field
                     name="password"
                     component={InputForm}
+                    type="password"
                     placeholder="Enter your password"
-                  />  
+                  />
                 </div>
                 <div className="auth-wrap-button">
                   <Button htmlType="submit">Log in</Button>
-                  <Button 
+                  <Button
                     type="link"
                     onClick={() => history.push('/auth/signup')}
                   >
@@ -72,4 +69,4 @@ export default class Login extends Component {
       </AuthLayout>
     );
   }
-}  
+}

@@ -1,9 +1,8 @@
 .auth-wrap {
-  border: 1px solid #bbb;
-  background-color: #eee;
-  padding: 24px;
-  width: 320px;
-  height: 450px;
+  padding: 40px;
+  border: 1px solid #bbbbbb;
+  border-radius: 4px;
+  background-color: #eeeeee;
 
   form {
     display: flex;
@@ -12,6 +11,7 @@
   }
 
   &-input {
+    // width: 240px;
     margin-bottom: 16px;
   }
 
@@ -21,5 +21,13 @@
     text-align: right;
   }
 
-  
+  &.auth-wrap-login {
+    width: 320px;
+    height: 280px;
+  }
+
+  &.auth-wrap-signup {
+    width: 320px;
+    height: 450px;
+  }
 }

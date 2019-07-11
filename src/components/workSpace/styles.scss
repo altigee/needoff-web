@@ -1,0 +1,92 @@
+.nd-workspace-wrapper {
+  padding: 0 48px 48px;
+
+  .ant-tabs-bar {
+    margin: 0;
+    border-bottom: none;
+
+    .ant-tabs-nav-container {
+      margin-bottom: 32px;
+    }
+  }
+
+  .nd-workspace-info-wrapper {
+    input,
+    textarea {
+      width: 50vw;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .ant-btn + .ant-btn {
+      margin-left: 16px;
+    }
+  }
+
+  .nd-workspace-invitations-wrapper {
+    .ant-table-row {
+      td {
+        padding: 4px 16px;
+      }
+
+      .ant-btn {
+        padding: 0;
+
+        &:hover {
+          color: darkblue;
+        }
+      }
+    }
+
+    .ant-card {
+      width: 60%;
+      margin: 16px 0;
+
+      .ant-card-body {
+        padding: 16px 16px 0 16px;
+      }
+    }
+  }
+}
+
+.nd-modal-leaves {
+  .ant-modal-content {
+    width: 580px;
+
+    .card {
+      text-align: center;
+
+      &:hover {
+        background-color: #e6f7ff;
+      }
+    }
+
+    .card-color-green {
+      .ant-card-head,
+      .ant-card-body {
+        color: green;
+      }
+    }
+
+    .card-color-orange {
+      .ant-card-head,
+      .ant-card-body {
+        color: orange;
+      }
+    }
+
+    .card-color-red {
+      .ant-card-head,
+      .ant-card-body {
+        color: red;
+      }
+    }
+
+    .card-leaves {
+      font-size: 20px;
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+.nd-workspaces-list-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px;
+  text-align: center;
+
+  .nd-card {
+    width: 50%;
+    margin-bottom: 24px;
+
+    .ant-card {
+      border-radius: 6px;
+    }
+
+    .card-name {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+}

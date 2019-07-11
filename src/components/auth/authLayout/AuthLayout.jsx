@@ -7,21 +7,22 @@ import './styles.scss';
 export default class AuthLayout extends Component {
   static propTypes = {
     children: node.isRequired,
-    className: string,
-  }
+    className: string
+  };
 
   static defaultProps = {
-    className: '',
-  }
+    className: ''
+  };
 
   render() {
     const classes = classNames('outer-wrap-page', this.props.className);
 
     return (
       <div className={classes}>
-          <div className="outer-children-page">
-            {this.props.children}
-          </div>
+        <div className="outer-children-page">
+          <div className="nd-logo">Needoff Logo</div>
+          {this.props.children}
+        </div>
       </div>
     );
   }

@@ -1,0 +1,13 @@
+.outer-wrap-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+
+  .nd-logo {
+    padding-bottom: 24px;
+    font-size: 24px;
+    text-align: center;
+    color: #666666;
+  }
+}

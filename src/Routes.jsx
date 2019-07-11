@@ -2,33 +2,32 @@ import React, { Component } from 'react';
 
 import { Route, Redirect, Switch } from 'react-router-dom';
 import Auth from './components/auth/Auth';
-import Dashboard from './components/dashboard/Dashboard';
-import authService from './components/authService/authService';
+import MainMenu from './components/mainMenu/MainMenu';
+import authService from './services/authService/authService';
+import ROOT_ROUTES from './root.routes';
 
 export default class Routes extends Component {
-  
   render() {
-    // console.log(authService.getStatus());
-    return authService.getStatus()
+    return authService.getToken()
       ? this.renderAuthedRoutes()
-      : this.renderUnAuthedRoutes()
+      : this.renderUnAuthedRoutes();
   }
 
   renderAuthedRoutes = () => {
-      return (
-          <Switch>
-            <Route path="/dashboard" component={Dashboard} />
-            <Redirect to="/dashboard" />
-          </Switch>
-      );
-    }
+    return (
+      <Switch>
+        <Route path={ROOT_ROUTES.MAIN} component={MainMenu} />
+        <Redirect to={ROOT_ROUTES.MAIN} />
+      </Switch>
+    );
+  };
 
   renderUnAuthedRoutes = () => {
     return (
-        <Switch>
-          <Route path="/auth" component={Auth} />
-          <Redirect to="/auth" />
-        </Switch>
+      <Switch>
+        <Route path={ROOT_ROUTES.AUTH} component={Auth} />
+        <Redirect to={ROOT_ROUTES.AUTH} />
+      </Switch>
     );
-  }  
+  };
 }
