@@ -17,7 +17,7 @@ const Todo = props => {
     (async () => {
       try {
         const approvalDaysOff = await profileService.getDaysOffForApproval(
-          profileService.getWs.id
+          profileService.currentWs.id
         );
         setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
       } catch (error) {
@@ -40,7 +40,7 @@ const Todo = props => {
           try {
             await profileService.approveDayOff(record.id);
             const approvalDaysOff = await profileService.getDaysOffForApproval(
-              profileService.getWs.id
+              profileService.currentWs.id
             );
             setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
             props.setCount(approvalDaysOff.dayOffsForApproval.length);
@@ -48,9 +48,6 @@ const Todo = props => {
             sendNotification('error');
           }
         })();
-      },
-      onCancel() {
-        console.log('Cancel');
       }
     });
   };
@@ -62,6 +59,7 @@ const Todo = props => {
         {
           id: item.id,
           key: item.id,
+          comment: item.comment,
           email: item.user.email,
           startDate: item.startDate,
           endDate: item.endDate,
@@ -70,7 +68,6 @@ const Todo = props => {
         }
       )
     );
-
     const columns = [
       {
         title: 'Name',
@@ -147,12 +144,14 @@ const Todo = props => {
     ];
 
     return (
-      <Table
-        dataSource={data}
-        size="small"
-        columns={columns}
-        pagination={false}
-      />
+      <>
+        <Table
+          dataSource={data}
+          size="small"
+          columns={columns}
+          pagination={false}
+        />
+      </>
     );
   };
 
