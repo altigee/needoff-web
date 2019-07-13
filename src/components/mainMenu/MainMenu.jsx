@@ -38,13 +38,13 @@ const MainMenu = () => {
         if (get(workspaces, 'length')) {
           const lsCurrentWs = localStorage.getItem('currentWs');
           if (lsCurrentWs) {
-            setCurrentWsId(profileService.getWs.id);
-            history.push(`/main/workspace`);
+            setCurrentWsId(profileService.currentWs.id);
+            history.push(MAIN_ROUTES.WORKSPACE);
           }
           if (workspaces.length === 1) {
             localStorage.setItem('currentWs', workspaces[0].name);
-            setCurrentWsId(profileService.getWs.id);
-            history.push(`/main/workspace`);
+            setCurrentWsId(profileService.currentWs.id);
+            history.push(MAIN_ROUTES.WORKSPACE);
           }
         } else {
           history.push(MAIN_ROUTES.WORKSPACES);

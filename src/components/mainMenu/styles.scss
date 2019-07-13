@@ -94,3 +94,7 @@ form {
     margin-left: 16px;
   }
 }
+
+label + .ant-input {
+  margin-top: 4px;
+}

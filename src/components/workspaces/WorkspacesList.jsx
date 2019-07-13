@@ -9,6 +9,7 @@ import profileService from './../../services/profileService/profileService';
 import history from './../router/history';
 import sendNotification from './../notifications/notifications';
 import InputForm from './../form/inputForm/InputForm';
+import MAIN_ROUTES from './../mainMenu/main.routes';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -33,7 +34,7 @@ const WorkspacesList = props => {
     }
     setLoading(false);
     setVisible(false);
-    history.push(`/main/workspace`);
+    history.push(MAIN_ROUTES.WORKSPACE);
   };
 
   const listWorkspaces = () => {
@@ -47,8 +48,8 @@ const WorkspacesList = props => {
                 type="link"
                 onClick={() => {
                   localStorage.setItem('currentWs', item.name);
-                  props.setWsId(profileService.getWs.id);
-                  history.push(`/main/workspace`);
+                  props.setWsId(profileService.currentWs.id);
+                  history.push(MAIN_ROUTES.WORKSPACE);
                 }}
               >
                 {item.name}
