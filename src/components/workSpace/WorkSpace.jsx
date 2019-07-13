@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Tabs } from 'antd';
 
-import history from './../router/history';
 import WorkspaceInfo from './workspaceInfo/WorkspaceInfo';
 import WorkspaceMembers from './workspaceMembers/WorkspaceMembers';
 import WorkspaceInvitations from './workspaceInvitations/WorkspaceInvitations';
 import WorkspaceHolidays from './workspaceHolidays/WorkspaceHolidays';
-import profileService from './../../services/profileService/profileService';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -20,7 +18,6 @@ const Workspace = () => {
 
   const onTabChange = tab => {
     setCurrentTab(tab);
-    history.push(`/main/workspace/${profileService.getWs.id}/${tab}`);
   };
 
   const renderTab = Component => {

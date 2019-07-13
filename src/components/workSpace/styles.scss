@@ -11,21 +11,27 @@
   }
 
   .nd-workspace-info-wrapper {
+    max-width: 800px;
+
     input,
     textarea {
       width: 50vw;
+      max-width: 500px;
     }
 
     textarea {
       resize: none;
     }
 
-    .ant-btn + .ant-btn {
-      margin-left: 16px;
+    label {
+      display: block;
     }
   }
 
-  .nd-workspace-invitations-wrapper {
+  .nd-workspace-invitations-wrapper,
+  .nd-workspace-holidays-wrapper {
+    max-width: 800px;
+
     .ant-table-row {
       td {
         padding: 4px 16px;
@@ -39,13 +45,21 @@
         }
       }
     }
+  }
 
+  .nd-workspace-members-wrapper {
     .ant-card {
-      width: 60%;
-      margin: 16px 0;
+      box-shadow: 2px 2px grey;
 
-      .ant-card-body {
-        padding: 16px 16px 0 16px;
+      &:hover {
+        background-color: #e6f7ff;
+      }
+
+      .ant-card-actions {
+        span,
+        i {
+          width: 100%;
+        }
       }
     }
   }
@@ -57,6 +71,7 @@
 
     .card {
       text-align: center;
+      box-shadow: 1px 1px grey;
 
       &:hover {
         background-color: #e6f7ff;

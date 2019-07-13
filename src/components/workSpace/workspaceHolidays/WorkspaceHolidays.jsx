@@ -25,7 +25,7 @@ const WorkspaceHolidays = () => {
   useEffect(() => {
     (async () => {
       try {
-        const currentWs = profileService.getWs;
+        const currentWs = profileService.currentWs;
         setCurrentWs(currentWs);
         const holidayDays = await profileService.getHolidayData(currentWs.id);
         setHolidays(holidayDays.workspaceDates);
@@ -34,18 +34,28 @@ const WorkspaceHolidays = () => {
       }
       setLoading(false);
     })();
-  }, [visible]);
+  }, []);
 
   const removeHoliday = async holiday => {
-    setLoading(true);
-    try {
-      await profileService.removeHoliday(holiday.id);
-      const holidayDays = await profileService.getHolidayData(currentWs.id);
-      setHolidays(holidayDays.workspaceDates);
-    } catch (error) {
-      sendNotification('error');
-    }
-    setLoading(false);
+    Modal.confirm({
+      title: 'Do you want to delete a holiday?',
+      icon: 'check-circle',
+      onOk() {
+        (async () => {
+          setLoading(true);
+          try {
+            await profileService.removeHoliday(holiday.id);
+            const holidayDays = await profileService.getHolidayData(
+              currentWs.id
+            );
+            setHolidays(holidayDays.workspaceDates);
+          } catch (error) {
+            sendNotification('error');
+          }
+          setLoading(false);
+        })();
+      }
+    });
   };
 
   const onSubmitHoliday = async data => {
@@ -138,7 +148,7 @@ const WorkspaceHolidays = () => {
                       type="checkbox"
                       defaultValue={false}
                     />
-                    <label>Official Holiday</label>
+                    <label> Official Holiday</label>
                     <br />
                   </div>
                   <br />
@@ -160,7 +170,7 @@ const WorkspaceHolidays = () => {
 
   if (loading) return <Loading />;
   return (
-    <div className="nd-workspace-invitations-wrapper">
+    <div className="nd-workspace-holidays-wrapper">
       {visible && addHoliday()}
       {listHolidays()}
       <br />
