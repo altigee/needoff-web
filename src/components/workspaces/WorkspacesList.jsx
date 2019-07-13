@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { assign } from 'lodash';
-import { Button, Modal, Card } from 'antd';
+import { Button, Modal } from 'antd';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
 
@@ -33,29 +33,26 @@ const WorkspacesList = props => {
     }
     setLoading(false);
     setVisible(false);
-    history.push(`/main/workspace/${profileService.getWs.id}/info`);
+    history.push(`/main/workspace`);
   };
 
   const listWorkspaces = () => {
     const data = workspaces.map(item => assign({}, item, { key: item.id }));
-    console.log(data);
-
     return (
       <>
         {data.map(item => {
           return (
-            <div key={item.id} className="nd-card">
-              <Card
-                size="small"
-                hoverable
+            <div key={item.id} className="nd-ws-button">
+              <Button
+                type="link"
                 onClick={() => {
                   localStorage.setItem('currentWs', item.name);
                   props.setWsId(profileService.getWs.id);
-                  history.push(`/main/workspace/${item.id}/info`);
+                  history.push(`/main/workspace`);
                 }}
               >
-                <p className="card-name">{item.name}</p>
-              </Card>
+                {item.name}
+              </Button>
             </div>
           );
         })}

@@ -70,12 +70,13 @@ export default class Signup extends Component {
                   <label>Password</label>
                   <Field
                     name="password"
+                    type="password"
                     component={InputForm}
                     placeholder="password"
                   />
                 </div>
                 <div className="auth-wrap-button">
-                  <Button htmlType="submit">Create Account</Button>
+                  <Button htmlType="submit">Sign Up</Button>
                   <Button
                     type="link"
                     onClick={() => history.push('/auth/login')}

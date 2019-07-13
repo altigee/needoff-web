@@ -39,12 +39,12 @@ const MainMenu = () => {
           const lsCurrentWs = localStorage.getItem('currentWs');
           if (lsCurrentWs) {
             setCurrentWsId(profileService.getWs.id);
-            history.push(`/main/workspace/${profileService.getWs.id}/info`);
+            history.push(`/main/workspace`);
           }
           if (workspaces.length === 1) {
             localStorage.setItem('currentWs', workspaces[0].name);
             setCurrentWsId(profileService.getWs.id);
-            history.push(`/main/workspace/${profileService.getWs.id}/info`);
+            history.push(`/main/workspace`);
           }
         } else {
           history.push(MAIN_ROUTES.WORKSPACES);
