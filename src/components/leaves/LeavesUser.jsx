@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { assign, find } from 'lodash';
-import { Button, Table, Modal, Collapse, Card } from 'antd';
+import { Button, Table, Modal, Card } from 'antd';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
 
@@ -15,8 +15,6 @@ import './styles.scss';
 import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
-
-const { Panel } = Collapse;
 
 const LeavesUser = () => {
   const [loading, setLoading] = useState(true);
