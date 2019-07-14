@@ -25,7 +25,7 @@ class profileService {
     return this.workspaces;
   }
 
-  get getWs() {
+  get currentWs() {
     const currentWs = find(this.workspaces, {
       name: localStorage.getItem('currentWs')
     });
@@ -337,6 +337,7 @@ class profileService {
         startDate
         endDate
         leaveType
+        comment
       }
     }		
     `;
