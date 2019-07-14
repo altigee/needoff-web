@@ -171,16 +171,19 @@ const WorkspaceInvitations = () => {
       }
     ];
 
-    return <Table dataSource={data} columns={columns} pagination={false} />;
+    return (
+      <div className="nd-table">
+        <Table dataSource={data} columns={columns} pagination={false} />
+      </div>
+    );
   };
 
   if (loading) return <Loading />;
 
   return (
-    <div className="nd-workspace-invitations-wrapper">
+    <div className="nd-workspace-tab nd-workspace-invitations-wrapper">
       {visible && addUser()}
       {listMembers()}
-      <br />
       <Button type="primary" onClick={() => setVisible(true)}>
         Add User
       </Button>

@@ -52,9 +52,10 @@ const WorkspaceInfo = () => {
       }
     ];
     return (
-      <div className="nd-workspace-info-wrapper">
-        <Table dataSource={data} columns={columns} pagination={false} />
-        <br />
+      <div className="nd-workspace-tab nd-workspace-info-wrapper">
+        <div className="nd-table">
+          <Table dataSource={data} columns={columns} pagination={false} />
+        </div>
         <Button type="primary" onClick={() => setEdit(true)}>
           Edit
         </Button>

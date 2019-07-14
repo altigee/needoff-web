@@ -20,14 +20,6 @@ const Workspace = () => {
     setCurrentTab(tab);
   };
 
-  const renderTab = Component => {
-    return (
-      <div className="nd-table nd-workspace-tab">
-        <Component />
-      </div>
-    );
-  };
-
   return (
     <div className="nd-workspace-wrapper">
       <Tabs
@@ -36,16 +28,16 @@ const Workspace = () => {
         onChange={onTabChange}
       >
         <TabPane tab="Info" key="info">
-          {activeTab === 'info' && renderTab(WorkspaceInfo)}
+          {activeTab === 'info' && <WorkspaceInfo />}
         </TabPane>
         <TabPane tab="Invitations" key="invitations">
-          {activeTab === 'invitations' && renderTab(WorkspaceInvitations)}
+          {activeTab === 'invitations' && <WorkspaceInvitations />}
         </TabPane>
         <TabPane tab="Members" key="members">
-          {activeTab === 'members' && renderTab(WorkspaceMembers)}
+          {activeTab === 'members' && <WorkspaceMembers />}
         </TabPane>
         <TabPane tab="Holidays" key="holidays">
-          {activeTab === 'holidays' && renderTab(WorkspaceHolidays)}
+          {activeTab === 'holidays' && <WorkspaceHolidays />}
         </TabPane>
       </Tabs>
     </div>

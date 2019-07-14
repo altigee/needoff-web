@@ -328,7 +328,7 @@ const WorkspaceMembers = () => {
         footer={null}
         closable={false}
       >
-        <div className="nd-table nd-leaves-intro-wrapper">
+        <div className="nd-table">
           <Table
             size="small"
             dataSource={data}
@@ -346,7 +346,7 @@ const WorkspaceMembers = () => {
 
   if (loading) return <Loading />;
   return (
-    <div className="nd-workspace-members-wrapper">
+    <div className="nd-workspace-tab nd-workspace-members-wrapper">
       {visible && updateStartDate()}
       {userById && visibleBalance && balanceByUser()}
       {listMembers()}

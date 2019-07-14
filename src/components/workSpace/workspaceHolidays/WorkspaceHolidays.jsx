@@ -103,7 +103,11 @@ const WorkspaceHolidays = () => {
         )
       }
     ];
-    return <Table dataSource={data} columns={columns} pagination={false} />;
+    return (
+      <div className="nd-table">
+        <Table dataSource={data} columns={columns} pagination={false} />
+      </div>
+    );
   };
 
   const addHoliday = () => {
@@ -170,10 +174,9 @@ const WorkspaceHolidays = () => {
 
   if (loading) return <Loading />;
   return (
-    <div className="nd-workspace-holidays-wrapper">
+    <div className="nd-workspace-tab nd-workspace-holidays-wrapper">
       {visible && addHoliday()}
       {listHolidays()}
-      <br />
       <Button type="primary" onClick={() => setVisible(true)}>
         Add Holiday
       </Button>
