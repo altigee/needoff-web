@@ -144,21 +144,21 @@ const Todo = props => {
     ];
 
     return (
-      <>
+      <div className="nd-table nd-table-todo">
         <Table
           dataSource={data}
           size="small"
           columns={columns}
           pagination={false}
         />
-      </>
+      </div>
     );
   };
 
   if (loading) return <Loading />;
   return (
     <>
-      <div className="nd-table nd-todo-wrapper">
+      <div className="nd-todo-wrapper">
         {approvalDaysOff && showRequestsForApprove()}
       </div>
     </>
