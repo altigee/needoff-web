@@ -1,25 +1,44 @@
-.ant-fullcalendar-content {
-  span {
-    font-size: 40px;
+.nd-calendar-wrapper {
+  max-width: 1300px;
+  padding: 48px 64px;
 
-    &.holiday-date {
-      color: red;
-    }
+  & > div:first-child {
+    padding: 24px;
+    border: 1px solid #bbbbbb;
+    border-radius: 4px;
+  }
 
-    &.vacation-paid {
-      color: green;
-    }
+  .ant-alert {
+    max-width: 450px;
+    margin-bottom: 8px;
+    border-radius: 0;
+  }
 
-    &.vacation-unpaid {
-      color: orange;
-    }
+  .ant-fullcalendar-content {
+    pointer-events: none;
 
-    &.vacation-sick {
-      color: plum;
-    }
+    span {
+      font-size: 40px;
 
-    &.vacation-wfh {
-      color: purple;
+      &.holiday-date {
+        color: red;
+      }
+
+      &.vacation-paid {
+        color: green;
+      }
+
+      &.vacation-unpaid {
+        color: orange;
+      }
+
+      &.vacation-sick {
+        color: plum;
+      }
+
+      &.vacation-wfh {
+        color: blue;
+      }
     }
   }
 }

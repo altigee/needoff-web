@@ -18,8 +18,8 @@ const Calendar = () => {
     (async () => {
       try {
         const [holidays, vacations] = await Promise.all([
-          profileService.getHolidayData(profileService.getWs.id),
-          profileService.getVacationDays(profileService.getWs.id)
+          profileService.getHolidayData(profileService.currentWs.id),
+          profileService.getVacationDays(profileService.currentWs.id)
         ]);
         setHolidays(holidays.workspaceDates);
         setVacations(vacations.teamCalendar);
@@ -48,6 +48,8 @@ const Calendar = () => {
       return false;
     });
     setListVacations(vacdata);
+    console.log(ldata);
+    console.log(vacdata);
   };
 
   const dateCellRender = value => {
@@ -88,9 +90,14 @@ const Calendar = () => {
         <ul>
           {listHolidays.map(item => (
             <li key={item.id}>
-              {item.name}
-              <br />
-              {item.isOfficialHoliday ? 'Public Holiday' : 'Workday'}
+              <u>
+                <span>
+                  <strong>{`${item.name} `}</strong>
+                </span>
+                <span className="alert-holiday-description">
+                  ({item.isOfficialHoliday ? 'Public Holiday' : 'Workday'})
+                </span>
+              </u>
             </li>
           ))}
         </ul>
@@ -122,16 +129,25 @@ const Calendar = () => {
                 type = 'WFH';
               }
               return (
-                <li key={item.id}>
-                  {item.user.firstName} {item.user.lastName}
+                <>
+                  <li key={item.id}>
+                    <u>
+                      <strong>
+                        {item.user.firstName} {item.user.lastName}
+                      </strong>
+                    </u>
+                    <br />
+                    <span>Type: {type}</span>
+                    <br />
+                    <i>
+                      {format(item.startDate, FORMATS.MMMMDoYYYY)} -{' '}
+                      {format(item.endDate, FORMATS.MMMMDoYYYY)}
+                    </i>
+                    <br />
+                    <span>Comment: {item.comment}</span>
+                  </li>
                   <br />
-                  {type}
-                  <br />
-                  {format(item.startDate, FORMATS.MMMMDoYYYY)} -{' '}
-                  {format(item.endDate, FORMATS.MMMMDoYYYY)}
-                  <br />
-                  {item.comment}
-                </li>
+                </>
               );
             })}
           </ul>
@@ -161,7 +177,7 @@ const Calendar = () => {
 
   if (loading) return <Loading />;
   return (
-    <div>
+    <div className="nd-calendar-wrapper">
       <CalendarAntd
         fullscreen={false}
         dateCellRender={dateCellRender}
