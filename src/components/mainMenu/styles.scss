@@ -97,6 +97,8 @@ form {
   }
 }
 
-label + .ant-input {
+label ~ .ant-input,
+label ~ .ant-calendar-picker,
+label ~ .ant-select {
   margin-top: 4px;
 }

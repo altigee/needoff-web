@@ -1,7 +1,68 @@
 .nd-leaves-wrapper {
-  padding: 24px;
+  max-width: 1200px;
+  padding: 0 48px;
 
-  .ant-table .ant-table-body {
+  .ant-tabs-bar {
     margin: 0;
+    border-bottom: none;
+
+    .ant-tabs-nav-container {
+      margin-bottom: 32px;
+    }
+  }
+
+  .nd-leaves-tab-personal {
+    .nd-table-personal-balance {
+      max-width: 550px;
+
+      th,
+      td {
+        text-align: center;
+      }
+    }
+
+    .nd-leaves-personal-info {
+      max-width: 750px;
+      margin: 64px 0;
+      border: 1px solid #bbbbbb;
+      border-radius: 4px;
+
+      .inner-table {
+        margin: 0;
+      }
+
+      .ant-card-head {
+        border-bottom: none;
+        background-color: #e9eae8;
+      }
+
+      .ant-card-body {
+        background-color: #e9eae8;
+      }
+
+      .ant-tabs-nav-container {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .nd-leaves-tab-team {
+    max-width: 750px;
+
+    .ant-table-body .ant-table-expanded-row > td:last-child {
+      padding: 20px 20px 20px 0;
+    }
+
+    .inner-table {
+      margin-bottom: 0;
+
+      .ant-table-thead tr th {
+        background-color: #e9eae8;
+      }
+
+      .ant-table-tbody tr td {
+        background-color: rgb(240, 242, 245);
+      }
+    }
   }
 }

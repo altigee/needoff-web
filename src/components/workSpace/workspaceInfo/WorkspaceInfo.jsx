@@ -81,7 +81,7 @@ const WorkspaceInfo = () => {
             <form onSubmit={handleSubmit}>
               <div>
                 <div>
-                  <label>Name</label>
+                  <label>Name</label> <br />
                   <Field
                     name="name"
                     component={InputForm}
@@ -90,7 +90,7 @@ const WorkspaceInfo = () => {
                   <br />
                 </div>
                 <div>
-                  <label>Description</label>
+                  <label>Description</label> <br />
                   <Field
                     name="description"
                     component={TextAreaForm}
@@ -100,7 +100,7 @@ const WorkspaceInfo = () => {
                 </div>
                 <br /> <br />
                 <div>
-                  <label>Paid vacation</label>
+                  <label>Paid vacation</label> <br />
                   <Field
                     name="paidDays"
                     component={InputForm}
@@ -109,7 +109,7 @@ const WorkspaceInfo = () => {
                   <br />
                 </div>
                 <div>
-                  <label>Unpaid vacation</label>
+                  <label>Unpaid vacation</label> <br />
                   <Field
                     name="unpaidDays"
                     component={InputForm}
@@ -118,7 +118,7 @@ const WorkspaceInfo = () => {
                 </div>
                 <br />
                 <div>
-                  <label>Sick leaves</label>
+                  <label>Sick leaves</label> <br />
                   <Field
                     name="sickDays"
                     component={InputForm}
