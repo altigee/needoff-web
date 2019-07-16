@@ -1,7 +1,29 @@
+@import './../../theme/theme';
+
 .nd-profile-wrapper {
-  padding: 24px;
+  max-width: 600px;
+  padding: 60px;
+  border: none;
 
   input {
     width: 50vw;
+    max-width: 600px;
+  }
+
+  .ant-card-body {
+    border: 1px solid $border-primary-color;
+    border-radius: 4px;
+    background-color: $bck-primary-color;
+
+    .ant-card-meta {
+      .ant-card-meta-title {
+        margin-top: 16px;
+        font-size: 18px;
+      }
+
+      .ant-card-meta-description {
+        color: black;
+      }
+    }
   }
 }

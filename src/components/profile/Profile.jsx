@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { assign } from 'lodash';
-import { Button, Table } from 'antd';
+import { Button, Avatar, Card } from 'antd';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
 import profileService from './../../services/profileService/profileService';
@@ -8,51 +7,52 @@ import history from './../router/history';
 import InputForm from './../form/inputForm/InputForm';
 import Loading from './../loading/Loading';
 import sendNotification from './../notifications/notifications';
+import MAIN_ROUTES from './../mainMenu/main.routes';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
 
+const { Meta } = Card;
+
 const focusOnError = createDecorator();
+
+const urlUser1 = '';
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
 
-  const profileInfo = (firstName, lastName, email, phone, position) => {
-    const data = [];
-    data.push(
-      assign({}, { key: email, firstName, lastName, email, phone, position })
-    );
-    const columns = [
-      {
-        title: 'First Name',
-        dataIndex: 'firstName',
-        key: 'firstName'
-      },
-      {
-        title: 'Last Name',
-        dataIndex: 'lastName',
-        key: 'lastName'
-      },
-      {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email'
-      },
-      {
-        title: 'Phone',
-        dataIndex: 'phone',
-        key: 'phone'
-      },
-      {
-        title: 'Position',
-        dataIndex: 'position',
-        key: 'position'
-      }
-    ];
+  const profileInfo = ({ firstName, lastName, email, phone, position }) => {
+    phone = '38(093)1111111';
+    position = 'Front-End Software Developer';
     return (
       <div className="nd-table nd-profile-wrapper">
-        <Table dataSource={data} columns={columns} pagination={false} />
+        <Card loading={loading} bordered={false}>
+          <Meta
+            avatar={
+              <Avatar
+                shape="square"
+                src={urlUser1}
+                icon="user"
+                size={120}
+                style={{ marginRight: '32px' }}
+              />
+            }
+            title={`${firstName} ${lastName}`}
+            description={`${position}`}
+          />
+          <br /> <br />
+          <div className="profile-details">
+            <div>
+              {`Email: `}
+              {email}
+            </div>
+            <div>
+              {`Phone: `}
+              {phone}
+            </div>
+          </div>
+        </Card>
         <br />
         <Button type="primary" onClick={() => setEdit(true)}>
           Edit
@@ -69,14 +69,15 @@ const Profile = () => {
       sendNotification('error');
     }
     setEdit(false);
-    history.push(`/`);
+    history.push(MAIN_ROUTES.PROFILE);
   };
 
   if (loading) return <Loading />;
   const { firstName, lastName, email, phone, position } = profileService.user;
+  console.log(profileService.currentWs);
   return (
     <>
-      {!edit && profileInfo(firstName, lastName, email, phone, position)}
+      {!edit && profileInfo(profileService.user)}
       {edit && (
         <div className="nd-profile-wrapper">
           <Form
@@ -92,12 +93,6 @@ const Profile = () => {
               }
               if (!values.email) {
                 errors.email = 'Required';
-              }
-              if (!values.phone) {
-                errors.phone = 'Required';
-              }
-              if (!values.position) {
-                errors.position = 'Required';
               }
               return errors;
             }}
@@ -115,7 +110,6 @@ const Profile = () => {
                     />
                     <br />
                   </div>
-                  <br />
                   <div>
                     <label>Last Name</label>
                     <br />
@@ -140,13 +134,21 @@ const Profile = () => {
                   <div>
                     <label>Phone</label>
                     <br />
-                    <Field name="phone" component={InputForm} />
+                    <Field
+                      name="phone"
+                      component={InputForm}
+                      defaultValue={phone}
+                    />
                   </div>
                   <br />
                   <div>
                     <label>Position</label>
                     <br />
-                    <Field name="position" component={InputForm} />
+                    <Field
+                      name="position"
+                      component={InputForm}
+                      defaultValue={position}
+                    />
                   </div>
                   <br />
                   <div className="nd-workspace-info-footer">
