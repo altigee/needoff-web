@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { get } from 'lodash';
 import { Table } from 'antd';
+import moment from 'moment';
 import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
@@ -11,6 +13,8 @@ const LeavesTeam = () => {
   const [loading, setLoading] = useState(true);
   const [vacations, setVacations] = useState(null);
   const [users, setUsers] = useState(null);
+  const [sortedInfo, setSortedInfo] = useState(null);
+  const [filteredInfo, setFilteredInfo] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -28,6 +32,11 @@ const LeavesTeam = () => {
       setLoading(false);
     })();
   }, []);
+
+  const handleChange = (pagination, filters, sorter) => {
+    setSortedInfo(sorter);
+    setFilteredInfo(filters);
+  };
 
   if (loading) return <Loading />;
 
@@ -82,6 +91,13 @@ const LeavesTeam = () => {
       return <span>{type}</span>;
     };
 
+    const leaveType = [
+      { text: 'Paid vacation', value: 'VACATION_PAID' },
+      { text: 'Unpaid vacation', value: 'VACATION_UNPAID' },
+      { text: 'Sick leave', value: 'SICK_LEAVE' },
+      { text: 'WFH', value: 'WFH' }
+    ];
+
     const data = vacations
       .filter(item => item.userId === Number(user.id))
       .map(item => ({
@@ -97,7 +113,10 @@ const LeavesTeam = () => {
       {
         title: 'Start Date',
         dataIndex: 'startDate',
-        key: 'startDate'
+        key: 'startDate',
+        sorter: (a, b) => moment(a.startDate) - moment(b.startDate),
+        sortOrder:
+          sortedInfo && sortedInfo.columnKey === 'startDate' && sortedInfo.order
       },
       {
         title: 'End Date',
@@ -107,6 +126,15 @@ const LeavesTeam = () => {
       {
         title: 'Type',
         key: 'leaveType',
+        filters: leaveType,
+        filteredValue: get(filteredInfo, 'leaveType') || null,
+        onFilter: (value, record) => record.leaveType.includes(value),
+        sorter: (a, b) =>
+          a.leaveType < b.leaveType ? -1 : a.leaveType > b.leaveType ? 1 : 0,
+        sortOrder:
+          sortedInfo &&
+          sortedInfo.columnKey === 'leaveType' &&
+          sortedInfo.order,
         render: renderLeaveType
       }
     ];
@@ -116,7 +144,8 @@ const LeavesTeam = () => {
           size="small"
           dataSource={data}
           columns={columns}
-          pagination={false}
+          onChange={handleChange}
+          pagination={{ pageSize: 5 }}
         />
       </div>
     );
