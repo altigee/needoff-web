@@ -48,8 +48,6 @@ const Calendar = () => {
       return false;
     });
     setListVacations(vacdata);
-    console.log(ldata);
-    console.log(vacdata);
   };
 
   const dateCellRender = value => {
@@ -129,25 +127,22 @@ const Calendar = () => {
                 type = 'WFH';
               }
               return (
-                <>
-                  <li key={item.id}>
-                    <u>
-                      <strong>
-                        {item.user.firstName} {item.user.lastName}
-                      </strong>
-                    </u>
-                    <br />
-                    <span>Type: {type}</span>
-                    <br />
-                    <i>
-                      {format(item.startDate, FORMATS.MMMMDoYYYY)} -{' '}
-                      {format(item.endDate, FORMATS.MMMMDoYYYY)}
-                    </i>
-                    <br />
-                    <span>Comment: {item.comment}</span>
-                  </li>
+                <li key={item.id}>
+                  <u>
+                    <strong>
+                      {item.user.firstName} {item.user.lastName}
+                    </strong>
+                  </u>
                   <br />
-                </>
+                  <span>Type: {type}</span>
+                  <br />
+                  <i>
+                    {format(item.startDate, FORMATS.SECONDARY)} -{' '}
+                    {format(item.endDate, FORMATS.SECONDARY)}
+                  </i>
+                  <br />
+                  <span>Comment: {item.comment}</span>
+                </li>
               );
             })}
           </ul>

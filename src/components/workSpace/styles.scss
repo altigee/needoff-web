@@ -1,3 +1,5 @@
+@import './../../theme/theme';
+
 .nd-workspace-wrapper {
   padding: 0 48px 48px;
 
@@ -37,7 +39,7 @@
         padding: 0;
 
         &:hover {
-          color: darkblue;
+          color: $hover-link-primary-color;
         }
       }
     }
@@ -45,10 +47,10 @@
 
   .nd-workspace-members-wrapper {
     .ant-card {
-      box-shadow: 2px 2px grey;
+      box-shadow: 2px 2px;
 
       &:hover {
-        background-color: #e6f7ff;
+        background-color: $hover-primary-color;
       }
 
       .ant-card-actions {
@@ -67,10 +69,10 @@
 
     .card {
       text-align: center;
-      box-shadow: 1px 1px grey;
+      box-shadow: 1px 1px $shadow-primary-color;
 
       &:hover {
-        background-color: #e6f7ff;
+        background-color: $hover-primary-color;
       }
     }
 

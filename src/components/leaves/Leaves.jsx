@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Tabs } from 'antd';
 import LeavesUser from './LeavesUser';
 import LeavesTeam from './LeavesTeam';
+import profileService from './../../services/profileService/profileService';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -18,12 +19,12 @@ const Leaves = () => {
       <Tabs
         activeKey={activeTab}
         defaultActiveKey="userLeave"
-        onChange={tab => setCurrentTab(tab)}
+        onChange={setCurrentTab}
       >
         <TabPane tab="Personal" key="userLeaves">
           {activeTab === 'userLeaves' && <LeavesUser />}
         </TabPane>
-        <TabPane tab={localStorage.getItem('currentWs')} key="teamLeaves">
+        <TabPane tab={profileService.currentWs.name} key="teamLeaves">
           {activeTab === 'teamLeaves' && <LeavesTeam />}
         </TabPane>
       </Tabs>

@@ -1,3 +1,5 @@
+@import './../../theme/theme';
+
 .nd-leaves-wrapper {
   max-width: 1200px;
   padding: 0 48px;
@@ -24,7 +26,7 @@
     .nd-leaves-personal-info {
       max-width: 750px;
       margin: 64px 0;
-      border: 1px solid #bbbbbb;
+      border: 1px solid $border-primary-color;
       border-radius: 4px;
 
       .inner-table {
@@ -33,11 +35,11 @@
 
       .ant-card-head {
         border-bottom: none;
-        background-color: #e9eae8;
+        background-color: $bck-primary-color;
       }
 
       .ant-card-body {
-        background-color: #e9eae8;
+        background-color: $bck-primary-color;
       }
 
       .ant-tabs-nav-container {
@@ -57,12 +59,16 @@
       margin-bottom: 0;
 
       .ant-table-thead tr th {
-        background-color: #e9eae8;
+        background-color: $bck-primary-color;
       }
 
       .ant-table-tbody tr td {
-        background-color: rgb(240, 242, 245);
+        background-color: $bck-secondary-color;
       }
     }
   }
+}
+
+.nd-leaves-form-user-request > div {
+  margin-bottom: 16px;
 }

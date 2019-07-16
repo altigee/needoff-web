@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { assign, find } from 'lodash';
+import { find } from 'lodash';
 import { Button, Table, Modal, Card } from 'antd';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
@@ -19,7 +19,7 @@ const focusOnError = createDecorator();
 const LeavesUser = () => {
   const [loading, setLoading] = useState(true);
   const [userBalance, setUserBalance] = useState(null);
-  const [visible, setVisible] = useState(false);
+  const [visibleCreateRequest, setVisibleCreateRequest] = useState(false);
   const [vacations, setVacations] = useState(null);
   const [users, setUsers] = useState(null);
   const [tab, setTab] = useState('pending');
@@ -53,12 +53,12 @@ const LeavesUser = () => {
   }) => {
     const data = [];
     const { userId } = profileService.user;
-    data.push(
-      assign(
-        {},
-        { key: userId, leftPaidLeaves, leftUnpaidLeaves, leftSickLeaves }
-      )
-    );
+    data.push({
+      key: userId,
+      leftPaidLeaves,
+      leftUnpaidLeaves,
+      leftSickLeaves
+    });
     const columns = [
       {
         title: `Sick days (Max - ${totalSickLeaves})`,
@@ -81,7 +81,7 @@ const LeavesUser = () => {
         <div className="nd-table nd-table-personal-balance">
           <Table dataSource={data} columns={columns} pagination={false} />
         </div>
-        <Button type="primary" onClick={() => setVisible(true)}>
+        <Button type="primary" onClick={() => setVisibleCreateRequest(true)}>
           Add Leave Day
         </Button>
       </>
@@ -120,7 +120,7 @@ const LeavesUser = () => {
       sendNotification('error');
     }
     setLoading(false);
-    setVisible(false);
+    setVisibleCreateRequest(false);
   };
 
   const createLeaveRequest = () => {
@@ -134,7 +134,7 @@ const LeavesUser = () => {
       <>
         <Modal
           title="Create Request"
-          visible={visible}
+          visible={visibleCreateRequest}
           footer={null}
           closable={false}
         >
@@ -160,7 +160,7 @@ const LeavesUser = () => {
           >
             {({ handleSubmit }) => (
               <form onSubmit={handleSubmit}>
-                <div>
+                <div className="nd-leaves-form-user-request">
                   <div>
                     <label>Type of Leave</label>
                     <Field
@@ -169,18 +169,15 @@ const LeavesUser = () => {
                       placeholder="Choose Type of Leave"
                       options={leaveTypes}
                     />
-                    <br />
                   </div>
                   <div>
                     <label>First Date</label> <br />
                     <Field name="startDate" component={DatePickerForm} />
                   </div>
-                  <br />
                   <div>
                     <label>Last Date</label> <br />
                     <Field name="endDate" component={DatePickerForm} />
                   </div>
-                  <br />
                   <div>
                     <label>Comment</label>
                     <Field
@@ -188,14 +185,16 @@ const LeavesUser = () => {
                       component={InputForm}
                       placeholder="Comment"
                     />
-                    <br />
                   </div>
                   <br />
                   <br />
                   <Button type="primary" htmlType="submit">
                     Ok
                   </Button>
-                  <Button type="secondary" onClick={() => setVisible(false)}>
+                  <Button
+                    type="secondary"
+                    onClick={() => setVisibleCreateRequest(false)}
+                  >
                     Cancel
                   </Button>
                 </div>
@@ -267,19 +266,14 @@ const LeavesUser = () => {
 
     const dataApproved = vacations
       .filter(item => item.userId === Number(user.profile.userId))
-      .map(item =>
-        assign(
-          {},
-          {
-            id: item.id,
-            key: item.id,
-            startDate: item.startDate,
-            endDate: item.endDate,
-            leaveType: item.leaveType,
-            comment: item.comment
-          }
-        )
-      );
+      .map(item => ({
+        id: item.id,
+        key: item.id,
+        startDate: item.startDate,
+        endDate: item.endDate,
+        leaveType: item.leaveType,
+        comment: item.comment
+      }));
 
     const dataPending = [];
 
@@ -307,7 +301,7 @@ const LeavesUser = () => {
   return (
     <div className="nd-leaves-tab-personal">
       {showLeavesInfo(userBalance)}
-      {visible && createLeaveRequest()}
+      {visibleCreateRequest && createLeaveRequest()}
       {listUserLeaves(currentUser)}
     </div>
   );
