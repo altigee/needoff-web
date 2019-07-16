@@ -24,6 +24,22 @@ class AuthService {
     }
   };
 
+  refreshTokenMock = async data => {
+    const mutation = `mutation {
+      login(email: "${data.login}", password:"${data.password}") {
+        accessToken
+        refreshToken
+      }
+    }`;
+    try {
+      const response = await request(endpoint, mutation);
+      localStorage.setItem('token', response.login.accessToken);
+      localStorage.setItem('email', data.login);
+    } catch (error) {
+      this.logout();
+    }
+  };
+
   register = async ({ login, password, firstName, lastName }) => {
     const mutation = `mutation register {
       register(
