@@ -11,6 +11,7 @@ import InputForm from './../form/inputForm/InputForm';
 import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
+import { format } from './../utils/date';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -48,7 +49,27 @@ const LeavesUser = () => {
   }, []);
 
   const onSubmitCreateLeaves = async data => {
-    setLoading(true);
+    const dataApproved = vacations
+      .filter(item => item.userId === Number(profileService.user.userId))
+      .map(item => ({
+        startDate: item.startDate,
+        endDate: item.endDate
+      }));
+    const startDate = format(data.startDate);
+    const endDate = format(data.endDate);
+    const busy = dataApproved.some(
+      day =>
+        (startDate >= day.startDate) & (startDate <= day.endDate) ||
+        (endDate >= day.startDate) & (endDate <= day.endDate) ||
+        (startDate < day.startDate) & (endDate > day.endDate)
+    );
+    if (busy) {
+      Modal.error({
+        title: 'Error',
+        content: 'You already have Leave day in that period'
+      });
+      return;
+    }
     let type;
     switch (data.type) {
       case 'Paid vacation':
@@ -63,12 +84,22 @@ const LeavesUser = () => {
       default:
         type = 'WFH';
     }
+    setLoading(true);
     try {
-      await profileService.createDayOff(
+      const response = await profileService.createDayOff(
         data,
         type,
         profileService.currentWs.id
       );
+      if (response.createDayOff.errors.length) {
+        Modal.error({
+          title: 'Error',
+          content: response.createDayOff.errors[0]
+        });
+        setLoading(false);
+        setVisibleCreateRequest(false);
+        return;
+      }
       const [userBalance, vacations] = await Promise.all([
         profileService.getMyBalance(profileService.currentWs.id),
         profileService.getVacationDays(profileService.currentWs.id)
