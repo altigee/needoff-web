@@ -7,6 +7,7 @@ import InputForm from './../../form/inputForm/InputForm';
 import history from '../../router/history';
 import AuthLayout from '../../auth/authLayout/AuthLayout';
 import authService from './../../../services/authService/authService';
+import AUTH_ROUTES from './../auth.routes';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
@@ -79,7 +80,7 @@ export default class Signup extends Component {
                   <Button htmlType="submit">Sign Up</Button>
                   <Button
                     type="link"
-                    onClick={() => history.push('/auth/login')}
+                    onClick={() => history.push(AUTH_ROUTES.LOGIN)}
                   >
                     Log in
                   </Button>
