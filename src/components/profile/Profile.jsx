@@ -74,7 +74,6 @@ const Profile = () => {
 
   if (loading) return <Loading />;
   const { firstName, lastName, email, phone, position } = profileService.user;
-  console.log(profileService.currentWs);
   return (
     <>
       {!edit && profileInfo(profileService.user)}
@@ -99,7 +98,7 @@ const Profile = () => {
           >
             {({ handleSubmit }) => (
               <form onSubmit={handleSubmit}>
-                <div>
+                <div className="form-data-wrapper">
                   <div>
                     <label>First Name</label>
                     <br />

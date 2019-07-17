@@ -14,6 +14,10 @@
   }
 
   .nd-leaves-tab-personal {
+    .leaves-info {
+      margin-bottom: 48px;
+    }
+
     .nd-table-personal-balance {
       max-width: 550px;
 
@@ -25,7 +29,7 @@
 
     .nd-leaves-personal-info {
       max-width: 750px;
-      margin: 64px 0;
+      margin: 16px 0;
       border: 1px solid $border-primary-color;
       border-radius: 4px;
 

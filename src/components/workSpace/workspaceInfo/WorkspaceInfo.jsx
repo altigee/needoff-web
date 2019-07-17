@@ -79,7 +79,7 @@ const WorkspaceInfo = () => {
         >
           {({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <div>
+              <div className="form-data-wrapper">
                 <div>
                   <label>Name</label> <br />
                   <Field

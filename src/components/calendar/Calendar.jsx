@@ -87,15 +87,13 @@ const Calendar = () => {
       <>
         <ul>
           {listHolidays.map(item => (
-            <li key={item.id}>
-              <u>
-                <span>
-                  <strong>{`${item.name} `}</strong>
-                </span>
-                <span className="alert-holiday-description">
-                  ({item.isOfficialHoliday ? 'Public Holiday' : 'Workday'})
-                </span>
-              </u>
+            <li key={item.id} className="calendar-event">
+              <span>
+                <strong>{`${item.name} `}</strong>
+              </span>
+              <span className="alert-holiday-description">
+                ({item.isOfficialHoliday ? 'Public Holiday' : 'Workday'})
+              </span>
             </li>
           ))}
         </ul>
@@ -105,49 +103,51 @@ const Calendar = () => {
 
   const leavesMessages = (list, messageType) => {
     return (
-      <Alert
-        type={messageType}
-        message={
-          <ul>
-            {list.map(item => {
-              let type = item.leaveType;
-              if (type === 'VACATION_PAID') {
-                type =
-                  item.startDate === item.endDate
-                    ? 'Vacation (1 day)'
-                    : 'Vacation';
-              } else if (type === 'VACATION_UNPAID') {
-                type =
-                  item.startDate === item.endDate
-                    ? 'Vacation upaid (1 day)'
-                    : 'Vacation (unpaid)';
-              } else if (type === 'SICK_LEAVE') {
-                type = 'Sick leave';
-              } else {
-                type = 'WFH';
-              }
-              return (
-                <li key={item.id}>
-                  <u>
-                    <strong>
-                      {item.user.firstName} {item.user.lastName}
-                    </strong>
-                  </u>
-                  <br />
-                  <span>Type: {type}</span>
-                  <br />
-                  <i>
-                    {format(item.startDate, FORMATS.SECONDARY)} -{' '}
-                    {format(item.endDate, FORMATS.SECONDARY)}
-                  </i>
-                  <br />
-                  <span>Comment: {item.comment}</span>
-                </li>
-              );
-            })}
-          </ul>
-        }
-      />
+      <div className="leave-alert">
+        <Alert
+          type={messageType}
+          message={
+            <ul>
+              {list.map(item => {
+                let type = item.leaveType;
+                if (type === 'VACATION_PAID') {
+                  type =
+                    item.startDate === item.endDate
+                      ? 'Vacation (1 day)'
+                      : 'Vacation';
+                } else if (type === 'VACATION_UNPAID') {
+                  type =
+                    item.startDate === item.endDate
+                      ? 'Vacation upaid (1 day)'
+                      : 'Vacation (unpaid)';
+                } else if (type === 'SICK_LEAVE') {
+                  type = 'Sick leave';
+                } else {
+                  type = 'WFH';
+                }
+                return (
+                  <li key={item.id} className="calendar-event">
+                    <u>
+                      <strong>
+                        {item.user.firstName} {item.user.lastName}
+                      </strong>
+                    </u>
+                    <br />
+                    <span>Type: {type}</span>
+                    <br />
+                    <i>
+                      {format(item.startDate, FORMATS.SECONDARY)} -{' '}
+                      {format(item.endDate, FORMATS.SECONDARY)}
+                    </i>
+                    <br />
+                    <span>Comment: {item.comment}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          }
+        />
+      </div>
     );
   };
 
@@ -177,6 +177,7 @@ const Calendar = () => {
         fullscreen={false}
         dateCellRender={dateCellRender}
         onSelect={onSelect}
+        className="calendar"
       />
       <br />
       {selectedValue && !!listHolidays.length && (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { find } from 'lodash';
-import { Button, Table, Modal, Card } from 'antd';
+import moment from 'moment';
+import { find, get } from 'lodash';
+import { Button, Table, Modal, Card, Switch, Icon } from 'antd';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
 
@@ -20,9 +21,12 @@ const LeavesUser = () => {
   const [loading, setLoading] = useState(true);
   const [userBalance, setUserBalance] = useState(null);
   const [visibleCreateRequest, setVisibleCreateRequest] = useState(false);
+  const [visibleHistory, setVisibleHistory] = useState(false);
   const [vacations, setVacations] = useState(null);
   const [users, setUsers] = useState(null);
   const [tab, setTab] = useState('pending');
+  const [sortedInfo, setSortedInfo] = useState(null);
+  const [filteredInfo, setFilteredInfo] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -42,51 +46,6 @@ const LeavesUser = () => {
       setLoading(false);
     })();
   }, []);
-
-  const showLeavesInfo = ({
-    leftPaidLeaves,
-    leftSickLeaves,
-    leftUnpaidLeaves,
-    totalPaidLeaves,
-    totalSickLeaves,
-    totalUnpaidLeaves
-  }) => {
-    const data = [];
-    const { userId } = profileService.user;
-    data.push({
-      key: userId,
-      leftPaidLeaves,
-      leftUnpaidLeaves,
-      leftSickLeaves
-    });
-    const columns = [
-      {
-        title: `Sick days (Max - ${totalSickLeaves})`,
-        dataIndex: 'leftSickLeaves',
-        key: 'leftSickLeaves'
-      },
-      {
-        title: `Paid days (Max - ${totalPaidLeaves})`,
-        dataIndex: 'leftPaidLeaves',
-        key: 'leftPaidLeaves'
-      },
-      {
-        title: `Unpaid days (Max - ${totalUnpaidLeaves})`,
-        dataIndex: 'leftUnpaidLeaves',
-        key: 'leftUnpaidLeaves'
-      }
-    ];
-    return (
-      <>
-        <div className="nd-table nd-table-personal-balance">
-          <Table dataSource={data} columns={columns} pagination={false} />
-        </div>
-        <Button type="primary" onClick={() => setVisibleCreateRequest(true)}>
-          Add Leave Day
-        </Button>
-      </>
-    );
-  };
 
   const onSubmitCreateLeaves = async data => {
     setLoading(true);
@@ -123,7 +82,74 @@ const LeavesUser = () => {
     setVisibleCreateRequest(false);
   };
 
-  const createLeaveRequest = () => {
+  const handleChange = (pagination, filters, sorter) => {
+    setSortedInfo(sorter);
+    setFilteredInfo(filters);
+  };
+
+  if (loading) return <Loading />;
+
+  const currentUser = find(users, { userId: profileService.user.userId });
+  return (
+    <div className="nd-leaves-tab-personal">
+      {showLeavesInfo(userBalance)}
+      {visibleCreateRequest && createLeaveRequest()}
+      <label>Details</label> <br />
+      <Switch
+        checkedChildren={<Icon type="check" />}
+        unCheckedChildren={<Icon type="close" />}
+        onChange={history => !setVisibleHistory(history)}
+      />
+      {visibleHistory && listUserLeaves(currentUser)}
+    </div>
+  );
+
+  function showLeavesInfo({
+    leftPaidLeaves,
+    leftSickLeaves,
+    leftUnpaidLeaves,
+    totalPaidLeaves,
+    totalSickLeaves,
+    totalUnpaidLeaves
+  }) {
+    const data = [];
+    const { userId } = profileService.user;
+    data.push({
+      key: userId,
+      leftPaidLeaves,
+      leftUnpaidLeaves,
+      leftSickLeaves
+    });
+    const columns = [
+      {
+        title: `Sick days (Max - ${totalSickLeaves})`,
+        dataIndex: 'leftSickLeaves',
+        key: 'leftSickLeaves'
+      },
+      {
+        title: `Paid days (Max - ${totalPaidLeaves})`,
+        dataIndex: 'leftPaidLeaves',
+        key: 'leftPaidLeaves'
+      },
+      {
+        title: `Unpaid days (Max - ${totalUnpaidLeaves})`,
+        dataIndex: 'leftUnpaidLeaves',
+        key: 'leftUnpaidLeaves'
+      }
+    ];
+    return (
+      <div className="leaves-info">
+        <div className="nd-table nd-table-personal-balance">
+          <Table dataSource={data} columns={columns} pagination={false} />
+        </div>
+        <Button type="primary" onClick={() => setVisibleCreateRequest(true)}>
+          Add Leave Day
+        </Button>
+      </div>
+    );
+  }
+
+  function createLeaveRequest() {
     const leaveTypes = [
       { key: '1', id: '1', name: 'Paid vacation' },
       { key: '2', id: '2', name: 'Unpaid vacation' },
@@ -204,55 +230,9 @@ const LeavesUser = () => {
         </Modal>
       </>
     );
-  };
+  }
 
-  const listUserLeaves = user => {
-    const showListLeaves = dataLeaves => {
-      const columns = [
-        {
-          title: 'Start Date',
-          dataIndex: 'startDate',
-          key: 'startDate'
-        },
-        {
-          title: 'End Date',
-          dataIndex: 'endDate',
-          key: 'endDate'
-        },
-        {
-          title: 'Type',
-          key: 'leaveType',
-          render: record => {
-            let type;
-            switch (record.leaveType) {
-              case 'VACATION_PAID':
-                type = 'Paid vacation';
-                break;
-              case 'VACATION_UNPAID':
-                type = 'Unpaid vacation';
-                break;
-              case 'SICK_LEAVE':
-                type = 'Sick leave';
-                break;
-              default:
-                type = 'Work From Home';
-            }
-            return <span>{type}</span>;
-          }
-        }
-      ];
-      return (
-        <div className="nd-table inner-table">
-          <Table
-            size="small"
-            dataSource={dataLeaves}
-            columns={columns}
-            pagination={false}
-          />
-        </div>
-      );
-    };
-
+  function listUserLeaves(user) {
     const tabList = [
       {
         key: 'pending',
@@ -293,18 +273,74 @@ const LeavesUser = () => {
         </Card>
       </div>
     );
-  };
+  }
 
-  if (loading) return <Loading />;
+  function showListLeaves(dataLeaves) {
+    const renderLeaveType = data => {
+      let type;
+      switch (data.leaveType) {
+        case 'VACATION_PAID':
+          type = 'Paid vacation';
+          break;
+        case 'VACATION_UNPAID':
+          type = 'Unpaid vacation';
+          break;
+        case 'SICK_LEAVE':
+          type = 'Sick leave';
+          break;
+        default:
+          type = 'Work From Home';
+      }
+      return <span>{type}</span>;
+    };
 
-  const currentUser = find(users, { userId: profileService.user.userId });
-  return (
-    <div className="nd-leaves-tab-personal">
-      {showLeavesInfo(userBalance)}
-      {visibleCreateRequest && createLeaveRequest()}
-      {listUserLeaves(currentUser)}
-    </div>
-  );
+    const leaveType = [
+      { text: 'Paid vacation', value: 'VACATION_PAID' },
+      { text: 'Unpaid vacation', value: 'VACATION_UNPAID' },
+      { text: 'Sick leave', value: 'SICK_LEAVE' },
+      { text: 'WFH', value: 'WFH' }
+    ];
+    const columns = [
+      {
+        title: 'Start Date',
+        dataIndex: 'startDate',
+        key: 'startDate',
+        sorter: (a, b) => moment(a.startDate) - moment(b.startDate),
+        sortOrder:
+          sortedInfo && sortedInfo.columnKey === 'startDate' && sortedInfo.order
+      },
+      {
+        title: 'End Date',
+        dataIndex: 'endDate',
+        key: 'endDate'
+      },
+      {
+        title: 'Type',
+        key: 'leaveType',
+        filters: leaveType,
+        filteredValue: get(filteredInfo, 'leaveType') || null,
+        onFilter: (value, record) => record.leaveType.includes(value),
+        sorter: (a, b) =>
+          a.leaveType < b.leaveType ? -1 : a.leaveType > b.leaveType ? 1 : 0,
+        sortOrder:
+          sortedInfo &&
+          sortedInfo.columnKey === 'leaveType' &&
+          sortedInfo.order,
+        render: renderLeaveType
+      }
+    ];
+    return (
+      <div className="nd-table inner-table">
+        <Table
+          size="small"
+          dataSource={dataLeaves}
+          columns={columns}
+          pagination={{ pageSize: 5 }}
+          onChange={handleChange}
+        />
+      </div>
+    );
+  }
 };
 
 export default LeavesUser;
