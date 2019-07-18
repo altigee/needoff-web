@@ -14,6 +14,7 @@ const refreshToken = data => {
   const decodeToken = jwtDecode(token).exp * 1000;
   const timeLeft = decodeToken - Date.now();
 
+  console.log('refresh token after: ', (timeLeft - DELTA) / 1000);
   timeout = setTimeout(() => {
     authService.refreshTokenMock(data);
   }, timeLeft - DELTA);
