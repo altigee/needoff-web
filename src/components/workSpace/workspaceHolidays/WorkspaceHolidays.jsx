@@ -150,10 +150,9 @@ const WorkspaceHolidays = () => {
                       name="officialHoliday"
                       component={CheckboxForm}
                       type="checkbox"
+                      label="Official Holiday"
                       defaultValue={false}
                     />
-                    <label> Official Holiday</label>
-                    <br />
                   </div>
                   <br />
                   <br />
