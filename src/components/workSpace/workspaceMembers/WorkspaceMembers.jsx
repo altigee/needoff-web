@@ -18,6 +18,7 @@ import sendNotification from './../../notifications/notifications';
 import profileService from './../../../services/profileService/profileService';
 import { format } from './../../utils/date';
 import Loading from './../../loading/Loading';
+import { VACATIONS } from './../../utils/constants';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
@@ -159,7 +160,7 @@ const WorkspaceMembers = () => {
                 className="card card-color-green"
                 title="Paid Leaves"
                 onClick={() => {
-                  setLeaveType('VACATION_PAID');
+                  setLeaveType(VACATIONS.PAID);
                   setVisibleLeavesDetails(true);
                 }}
               >
@@ -174,7 +175,7 @@ const WorkspaceMembers = () => {
                 hoverable
                 title="Unpaid Leaves"
                 onClick={() => {
-                  setLeaveType('VACATION_UNPAID');
+                  setLeaveType(VACATIONS.UNPAID);
                   setVisibleLeavesDetails(true);
                 }}
               >
@@ -189,7 +190,7 @@ const WorkspaceMembers = () => {
                 hoverable
                 title="Sick Leaves"
                 onClick={() => {
-                  setLeaveType('SICK_LEAVE');
+                  setLeaveType(VACATIONS.SICK);
                   setVisibleLeavesDetails(true);
                 }}
               >

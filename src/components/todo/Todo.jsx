@@ -5,6 +5,7 @@ import { Button, Table, Modal, Divider } from 'antd';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
 import Loading from './../loading/Loading';
+import { VACATIONS } from './../utils/constants';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -80,13 +81,13 @@ const Todo = props => {
         render: record => {
           let type;
           switch (record.leaveType) {
-            case 'VACATION_PAID':
+            case VACATIONS.PAID:
               type = 'Paid vacation';
               break;
-            case 'VACATION_UNPAID':
+            case VACATIONS.UNPAID:
               type = 'Unpaid vacation';
               break;
-            case 'SICK_LEAVE':
+            case VACATIONS.SICK:
               type = 'Sick leave';
               break;
             default:
