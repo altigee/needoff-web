@@ -12,6 +12,7 @@ import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
 import { format, FORMATS } from './../utils/date';
+import { VACATIONS } from './../utils/vacations';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -77,16 +78,16 @@ const LeavesUser = () => {
     let type;
     switch (data.type) {
       case 'Paid vacation':
-        type = 'VACATION_PAID';
+        type = VACATIONS.PAID;
         break;
       case 'Unpaid vacation':
-        type = 'VACATION_UNPAID';
+        type = VACATIONS.UNPAID;
         break;
       case 'Sick leave':
-        type = 'SICK_LEAVE';
+        type = VACATIONS.SICK;
         break;
       default:
-        type = 'WFH';
+        type = VACATIONS.WFH;
     }
     setLoading(true);
     try {
@@ -339,13 +340,13 @@ const LeavesUser = () => {
     const renderLeaveType = data => {
       let type;
       switch (data.leaveType) {
-        case 'VACATION_PAID':
+        case VACATIONS.PAID:
           type = 'Paid vacation';
           break;
-        case 'VACATION_UNPAID':
+        case VACATIONS.UNPAID:
           type = 'Unpaid vacation';
           break;
-        case 'SICK_LEAVE':
+        case VACATIONS.SICK:
           type = 'Sick leave';
           break;
         default:
@@ -355,10 +356,10 @@ const LeavesUser = () => {
     };
 
     const leaveType = [
-      { text: 'Paid vacation', value: 'VACATION_PAID' },
-      { text: 'Unpaid vacation', value: 'VACATION_UNPAID' },
-      { text: 'Sick leave', value: 'SICK_LEAVE' },
-      { text: 'WFH', value: 'WFH' }
+      { text: 'Paid vacation', value: VACATIONS.PAID },
+      { text: 'Unpaid vacation', value: VACATIONS.UNPAID },
+      { text: 'Sick leave', value: VACATIONS.SICK },
+      { text: 'WFH', value: VACATIONS.WFH }
     ];
     const columns = [
       {
