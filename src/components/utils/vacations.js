@@ -1,0 +1,6 @@
+export const VACATIONS = {
+  PAID: 'VACATION_PAID',
+  UNPAID: 'VACATION_UNPAID',
+  SICK: 'SICK_LEAVE',
+  WFH: 'WFH'
+};

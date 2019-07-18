@@ -13,7 +13,6 @@ class profileService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify({ query })
@@ -25,7 +24,7 @@ class profileService {
     return this.workspaces;
   }
 
-  get getWs() {
+  get currentWs() {
     const currentWs = find(this.workspaces, {
       name: localStorage.getItem('currentWs')
     });
@@ -337,6 +336,7 @@ class profileService {
         startDate
         endDate
         leaveType
+        comment
       }
     }		
     `;

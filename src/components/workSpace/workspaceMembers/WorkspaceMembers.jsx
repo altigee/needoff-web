@@ -18,6 +18,7 @@ import sendNotification from './../../notifications/notifications';
 import profileService from './../../../services/profileService/profileService';
 import { format } from './../../utils/date';
 import Loading from './../../loading/Loading';
+import { VACATIONS } from './../../utils/vacations';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
@@ -29,7 +30,7 @@ const { Meta } = Card;
 const WorkspaceMembers = () => {
   const [visible, setVisible] = useState(false);
   const [visibleBalance, setVisibleBalance] = useState(false);
-  const [visibleDetails, setVisibleDetails] = useState(false);
+  const [visibleLeavesDetails, setVisibleLeavesDetails] = useState(false);
   const [users, setUsers] = useState(null);
   const [userById, setUserById] = useState(null);
   const [leaveType, setLeaveType] = useState(null);
@@ -41,8 +42,8 @@ const WorkspaceMembers = () => {
     (async () => {
       try {
         const [vacations, users] = await Promise.all([
-          profileService.getVacationDays(profileService.getWs.id),
-          profileService.getWSMembers(profileService.getWs.id)
+          profileService.getVacationDays(profileService.currentWs.id),
+          profileService.getWSMembers(profileService.currentWs.id)
         ]);
         setVacations(vacations.teamCalendar);
         setUsers(users.workspaceMembers);
@@ -58,11 +59,13 @@ const WorkspaceMembers = () => {
     setLoading(true);
     try {
       await profileService.updateStartDate(
-        profileService.getWs.id,
+        profileService.currentWs.id,
         userById,
         startdate
       );
-      const users = await profileService.getWSMembers(profileService.getWs.id);
+      const users = await profileService.getWSMembers(
+        profileService.currentWs.id
+      );
       setUsers(users.workspaceMembers);
     } catch (error) {
       sendNotification('error');
@@ -115,23 +118,31 @@ const WorkspaceMembers = () => {
   };
 
   const removeUser = async user => {
-    setLoading(true);
-    try {
-      await profileService.removeWorkspaceMember(
-        user.profile.email,
-        profileService.getWs.id
-      );
-      const users = await profileService.getWSMembers(profileService.getWs.id);
-      setUsers(users.workspaceMembers);
-    } catch (error) {
-      sendNotification('error');
-    }
-    setLoading(false);
+    Modal.confirm({
+      title: 'Do you want to delete a user?',
+      icon: 'check-circle',
+      onOk() {
+        (async () => {
+          setLoading(true);
+          try {
+            await profileService.removeWorkspaceMember(
+              user.profile.email,
+              profileService.currentWs.id
+            );
+            const users = await profileService.getWSMembers(
+              profileService.currentWs.id
+            );
+            setUsers(users.workspaceMembers);
+          } catch (error) {
+            sendNotification('error');
+          }
+          setLoading(false);
+        })();
+      }
+    });
   };
 
   const balanceByUser = () => {
-    console.log(userBalance);
-
     return (
       <>
         <Modal
@@ -144,15 +155,13 @@ const WorkspaceMembers = () => {
           }}
         >
           <Row gutter={16}>
-            <Col size="200" span={8}>
+            <Col span={8}>
               <Card
                 className="card card-color-green"
-                hoverable
                 title="Paid Leaves"
                 onClick={() => {
-                  setLeaveType('VACATION_PAID');
-                  console.log(leaveType);
-                  setVisibleDetails(true);
+                  setLeaveType(VACATIONS.PAID);
+                  setVisibleLeavesDetails(true);
                 }}
               >
                 <div className="card-leaves">
@@ -166,9 +175,8 @@ const WorkspaceMembers = () => {
                 hoverable
                 title="Unpaid Leaves"
                 onClick={() => {
-                  setLeaveType('VACATION_UNPAID');
-                  console.log(leaveType);
-                  setVisibleDetails(true);
+                  setLeaveType(VACATIONS.UNPAID);
+                  setVisibleLeavesDetails(true);
                 }}
               >
                 <div className="card-leaves">
@@ -182,9 +190,8 @@ const WorkspaceMembers = () => {
                 hoverable
                 title="Sick Leaves"
                 onClick={() => {
-                  setLeaveType('SICK_LEAVE');
-                  console.log(leaveType);
-                  setVisibleDetails(true);
+                  setLeaveType(VACATIONS.SICK);
+                  setVisibleLeavesDetails(true);
                 }}
               >
                 <div className="card-leaves">
@@ -210,66 +217,73 @@ const WorkspaceMembers = () => {
   const listMembers = () => {
     return (
       <>
-        {users.map(item => {
-          return (
-            <div key={item.userId}>
-              <Card
-                hoverable
-                actions={[
-                  <Icon
-                    type="edit"
-                    onClick={() => {
-                      setUserById(item.userId);
-                      setVisible(true);
-                    }}
-                  />,
-                  <Icon type="delete" onClick={() => removeUser(item)} />,
-                  <Icon
-                    type="info"
-                    onClick={async () => {
-                      setUserById(item.userId);
-                      try {
-                        const balance = await profileService.balanceByUser(
-                          profileService.getWs.id,
-                          item.userId
-                        );
-                        setUserBalance(balance.balanceByUser);
-                      } catch (error) {
-                        console.log(error);
-                      }
-                      setVisibleBalance(true);
-                    }}
-                  />
-                ]}
-              >
-                <Skeleton loading={loading} avatar active>
-                  <Meta
-                    avatar={
-                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                    }
-                    title={`${item.profile.firstName} ${item.profile.lastName}`}
-                  />
-                </Skeleton>
-                <br />
-                <p>
-                  <strong>Email: </strong>
-                  {item.profile.email}
-                </p>
-                <p>
-                  <strong>Start Date: </strong>
-                  {item.startDate}
-                </p>
-              </Card>
-            </div>
-          );
-        })}
+        <Row gutter={22}>
+          {users.map(item => {
+            return (
+              <div key={item.userId}>
+                <Col style={{ width: 350, marginTop: 24 }} span={24}>
+                  <Card
+                    hoverable
+                    actions={[
+                      <Icon
+                        type="edit"
+                        onClick={() => {
+                          setUserById(item.userId);
+                          setVisible(true);
+                        }}
+                      />,
+                      <Icon type="delete" onClick={() => removeUser(item)} />,
+                      <Icon
+                        type="info"
+                        onClick={async () => {
+                          setUserById(item.userId);
+                          try {
+                            const balance = await profileService.balanceByUser(
+                              profileService.currentWs.id,
+                              item.userId
+                            );
+                            setUserBalance(balance.balanceByUser);
+                          } catch (error) {
+                            console.log(error);
+                          }
+                          setVisibleBalance(true);
+                        }}
+                      />
+                    ]}
+                  >
+                    <Skeleton loading={loading} avatar active>
+                      <Meta
+                        avatar={
+                          <Avatar
+                            icon="user"
+                            onClick={() => {
+                              console.log('upload');
+                            }}
+                          />
+                        }
+                        title={`${item.profile.firstName} ${item.profile.lastName}`}
+                      />
+                    </Skeleton>
+                    <br />
+                    <p>
+                      <strong>Email: </strong>
+                      {item.profile.email}
+                    </p>
+                    <p>
+                      <strong>Start Date: </strong>
+                      {item.startDate}
+                    </p>
+                  </Card>
+                </Col>
+              </div>
+            );
+          })}
+        </Row>
       </>
     );
   };
 
   const userLeaves = () => {
-    console.log(vacations);
-    console.log(leaveType);
     const data = vacations
       .filter(
         item => item.userId === Number(userById) && item.leaveType === leaveType
@@ -287,7 +301,6 @@ const WorkspaceMembers = () => {
           }
         )
       );
-    // console.log(data);
     const columns = [
       {
         title: 'Start Date',
@@ -312,11 +325,11 @@ const WorkspaceMembers = () => {
       <Modal
         title={`${currentUser.profile.firstName} ${currentUser.profile.lastName}`}
         className="nd-modal-leaves"
-        visible={visibleDetails}
+        visible={visibleLeavesDetails}
         footer={null}
         closable={false}
       >
-        <div className="nd-table nd-leaves-intro-wrapper">
+        <div className="nd-table">
           <Table
             size="small"
             dataSource={data}
@@ -324,7 +337,7 @@ const WorkspaceMembers = () => {
             pagination={false}
           />
           <br /> <br />
-          <Button type="primary" onClick={() => setVisibleDetails(false)}>
+          <Button type="primary" onClick={() => setVisibleLeavesDetails(false)}>
             Cancel
           </Button>
         </div>
@@ -334,11 +347,11 @@ const WorkspaceMembers = () => {
 
   if (loading) return <Loading />;
   return (
-    <div className="nd-workspace-invitations-wrapper">
+    <div className="nd-workspace-tab nd-workspace-members-wrapper">
       {visible && updateStartDate()}
       {userById && visibleBalance && balanceByUser()}
       {listMembers()}
-      {userById && visibleDetails && userLeaves()}
+      {userById && visibleLeavesDetails && userLeaves()}
       <br />
     </div>
   );

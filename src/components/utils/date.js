@@ -1,11 +1,11 @@
 import moment from 'moment';
 
 export const FORMATS = {
-  YYYYMMDD: 'YYYY-MM-DD',
-  MMMMDoYYYY: 'MMMM Do YYYY'
+  DEFAULT: 'YYYY-MM-DD',
+  SECONDARY: 'MMMM Do YYYY'
 };
 
-export function format(date, display = FORMATS.YYYYMMDD) {
+export function format(date, display = FORMATS.DEFAULT) {
   const momentDate = moment(date);
 
   return date && momentDate.isValid() ? momentDate.format(display) : '';

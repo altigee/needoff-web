@@ -25,7 +25,7 @@ const WorkspaceInvitations = () => {
   useEffect(() => {
     (async () => {
       try {
-        const currentWs = profileService.getWs;
+        const currentWs = profileService.currentWs;
         setCurrentWs(currentWs);
         const users = await profileService.getWSMembersInvitations(
           currentWs.id
@@ -56,6 +56,7 @@ const WorkspaceInvitations = () => {
     return (
       <>
         <Modal
+          className="nd-modal-invitations"
           title="Add User"
           visible={visible}
           footer={null}
@@ -108,16 +109,29 @@ const WorkspaceInvitations = () => {
     );
   };
 
-  const removeUser = async record => {
-    setLoading(true);
-    try {
-      await profileService.removeWorkspaceMember(record.email, currentWs.id);
-      const users = await profileService.getWSMembersInvitations(currentWs.id);
-      setUsers(users.workspaceInvitations);
-    } catch (error) {
-      sendNotification('error');
-    }
-    setLoading(false);
+  const removeUser = async user => {
+    Modal.confirm({
+      title: 'Do you want to delete a user?',
+      icon: 'check-circle',
+      onOk() {
+        (async () => {
+          setLoading(true);
+          try {
+            await profileService.removeWorkspaceMember(
+              user.email,
+              currentWs.id
+            );
+            const users = await profileService.getWSMembersInvitations(
+              currentWs.id
+            );
+            setUsers(users.workspaceInvitations);
+          } catch (error) {
+            sendNotification('error');
+          }
+          setLoading(false);
+        })();
+      }
+    });
   };
 
   const listMembers = () => {
@@ -157,16 +171,19 @@ const WorkspaceInvitations = () => {
       }
     ];
 
-    return <Table dataSource={data} columns={columns} pagination={false} />;
+    return (
+      <div className="nd-table">
+        <Table dataSource={data} columns={columns} pagination={false} />
+      </div>
+    );
   };
 
   if (loading) return <Loading />;
 
   return (
-    <div className="nd-workspace-invitations-wrapper">
+    <div className="nd-workspace-tab nd-workspace-invitations-wrapper">
       {visible && addUser()}
       {listMembers()}
-      <br />
       <Button type="primary" onClick={() => setVisible(true)}>
         Add User
       </Button>

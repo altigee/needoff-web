@@ -5,6 +5,7 @@ import { Button, Table, Modal, Divider } from 'antd';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
 import Loading from './../loading/Loading';
+import { VACATIONS } from './../utils/vacations';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -17,7 +18,7 @@ const Todo = props => {
     (async () => {
       try {
         const approvalDaysOff = await profileService.getDaysOffForApproval(
-          profileService.getWs.id
+          profileService.currentWs.id
         );
         setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
       } catch (error) {
@@ -40,7 +41,7 @@ const Todo = props => {
           try {
             await profileService.approveDayOff(record.id);
             const approvalDaysOff = await profileService.getDaysOffForApproval(
-              profileService.getWs.id
+              profileService.currentWs.id
             );
             setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
             props.setCount(approvalDaysOff.dayOffsForApproval.length);
@@ -48,9 +49,6 @@ const Todo = props => {
             sendNotification('error');
           }
         })();
-      },
-      onCancel() {
-        console.log('Cancel');
       }
     });
   };
@@ -62,6 +60,7 @@ const Todo = props => {
         {
           id: item.id,
           key: item.id,
+          comment: item.comment,
           email: item.user.email,
           startDate: item.startDate,
           endDate: item.endDate,
@@ -70,7 +69,6 @@ const Todo = props => {
         }
       )
     );
-
     const columns = [
       {
         title: 'Name',
@@ -83,13 +81,13 @@ const Todo = props => {
         render: record => {
           let type;
           switch (record.leaveType) {
-            case 'VACATION_PAID':
+            case VACATIONS.PAID:
               type = 'Paid vacation';
               break;
-            case 'VACATION_UNPAID':
+            case VACATIONS.UNPAID:
               type = 'Unpaid vacation';
               break;
-            case 'SICK_LEAVE':
+            case VACATIONS.SICK:
               type = 'Sick leave';
               break;
             default:
@@ -147,19 +145,21 @@ const Todo = props => {
     ];
 
     return (
-      <Table
-        dataSource={data}
-        size="small"
-        columns={columns}
-        pagination={false}
-      />
+      <div className="nd-table nd-table-todo">
+        <Table
+          dataSource={data}
+          size="small"
+          columns={columns}
+          pagination={false}
+        />
+      </div>
     );
   };
 
   if (loading) return <Loading />;
   return (
     <>
-      <div className="nd-table nd-todo-wrapper">
+      <div className="nd-todo-wrapper">
         {approvalDaysOff && showRequestsForApprove()}
       </div>
     </>

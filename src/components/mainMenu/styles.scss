@@ -1,8 +1,9 @@
+@import './../../theme/theme';
+
 .nd-main-wrapper {
-  max-width: 1000px;
   margin: 0 54px;
-  border-right: 1px solid #bbbbbb;
-  border-left: 1px solid #bbbbbb;
+  border-right: 1px solid $border-primary-color;
+  border-left: 1px solid $border-primary-color;
 
   .nd-main-menu-sider {
     display: flex;
@@ -10,13 +11,13 @@
     height: 100vh;
     padding-bottom: 24px;
     border-right: none;
-    background-color: #e9eae8;
+    background-color: $bck-primary-color;
 
     li.ant-menu-item {
       margin: 0 0 8px 0;
 
       &.ant-menu-item-active {
-        background-color: #e6f7ff;
+        background-color: $hover-primary-color;
       }
 
       &.logout {
@@ -65,9 +66,11 @@
 }
 
 .nd-table {
+  margin-bottom: 32px;
+
   .ant-table-wrapper {
     .ant-table-content {
-      border: 1px solid #bbbbbb;
+      border: 1px solid $border-primary-color;
       border-radius: 4px;
     }
   }
@@ -83,8 +86,34 @@
       padding: 0;
 
       &:hover {
-        color: darkblue;
+        color: $hover-link-primary-color;
       }
     }
+  }
+}
+
+.ant-modal-content,
+form {
+  .ant-btn + .ant-btn {
+    margin-left: 16px;
+  }
+}
+
+label ~ .ant-input,
+label ~ .ant-calendar-picker,
+label ~ .ant-select {
+  margin-top: 4px;
+}
+
+.form-data-wrapper {
+  width: 50vw;
+  max-width: 500px;
+  padding: 24px;
+  border: 1px solid $border-primary-color;
+  border-radius: 4px;
+  background-color: darken($bck-secondary-color, 3);
+
+  textarea {
+    resize: none;
   }
 }

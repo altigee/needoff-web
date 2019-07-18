@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { assign } from 'lodash';
-import { Button, Modal, Card } from 'antd';
+import { Button, Modal } from 'antd';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
 
@@ -9,6 +9,7 @@ import profileService from './../../services/profileService/profileService';
 import history from './../router/history';
 import sendNotification from './../notifications/notifications';
 import InputForm from './../form/inputForm/InputForm';
+import MAIN_ROUTES from './../mainMenu/main.routes';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -33,29 +34,26 @@ const WorkspacesList = props => {
     }
     setLoading(false);
     setVisible(false);
-    history.push(`/main/workspace/${profileService.getWs.id}/info`);
+    history.push(MAIN_ROUTES.WORKSPACE);
   };
 
   const listWorkspaces = () => {
     const data = workspaces.map(item => assign({}, item, { key: item.id }));
-    console.log(data);
-
     return (
       <>
         {data.map(item => {
           return (
-            <div key={item.id} className="nd-card">
-              <Card
-                size="small"
-                hoverable
+            <div key={item.id} className="nd-ws-button">
+              <Button
+                type="link"
                 onClick={() => {
                   localStorage.setItem('currentWs', item.name);
-                  props.setWsId(profileService.getWs.id);
-                  history.push(`/main/workspace/${item.id}/info`);
+                  props.setWsId(profileService.currentWs.id);
+                  history.push(MAIN_ROUTES.WORKSPACE);
                 }}
               >
-                <p className="card-name">{item.name}</p>
-              </Card>
+                {item.name}
+              </Button>
             </div>
           );
         })}

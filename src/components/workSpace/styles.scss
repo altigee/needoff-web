@@ -1,3 +1,5 @@
+@import './../../theme/theme';
+
 .nd-workspace-wrapper {
   padding: 0 48px 48px;
 
@@ -11,21 +13,13 @@
   }
 
   .nd-workspace-info-wrapper {
-    input,
-    textarea {
-      width: 50vw;
-    }
-
-    textarea {
-      resize: none;
-    }
-
-    .ant-btn + .ant-btn {
-      margin-left: 16px;
-    }
+    max-width: 800px;
   }
 
-  .nd-workspace-invitations-wrapper {
+  .nd-workspace-invitations-wrapper,
+  .nd-workspace-holidays-wrapper {
+    max-width: 800px;
+
     .ant-table-row {
       td {
         padding: 4px 16px;
@@ -35,17 +29,25 @@
         padding: 0;
 
         &:hover {
-          color: darkblue;
+          color: $hover-link-primary-color;
         }
       }
     }
+  }
 
+  .nd-workspace-members-wrapper {
     .ant-card {
-      width: 60%;
-      margin: 16px 0;
+      box-shadow: 2px 2px;
 
-      .ant-card-body {
-        padding: 16px 16px 0 16px;
+      &:hover {
+        background-color: $hover-primary-color;
+      }
+
+      .ant-card-actions {
+        span,
+        i {
+          width: 100%;
+        }
       }
     }
   }
@@ -57,9 +59,10 @@
 
     .card {
       text-align: center;
+      box-shadow: 1px 1px $shadow-primary-color;
 
       &:hover {
-        background-color: #e6f7ff;
+        background-color: $hover-primary-color;
       }
     }
 

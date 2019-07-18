@@ -1,25 +1,63 @@
-.ant-fullcalendar-content {
-  span {
-    font-size: 40px;
+@import './../../theme/theme';
 
-    &.holiday-date {
-      color: red;
+.nd-calendar-wrapper {
+  max-width: 1200px;
+  padding: 48px 64px;
+
+  & > div:first-child {
+    padding: 24px;
+    border: 1px solid $border-primary-color;
+    border-radius: 4px;
+  }
+
+  .calendar {
+    background-color: darken($bck-secondary-color, 3);
+
+    .ant-fullcalendar-content {
+      pointer-events: none;
+
+      span {
+        font-size: 40px;
+
+        &.holiday-date {
+          color: plum;
+        }
+
+        &.vacation-paid {
+          color: green;
+        }
+
+        &.vacation-unpaid {
+          color: orange;
+        }
+
+        &.vacation-sick {
+          color: red;
+        }
+
+        &.vacation-wfh {
+          color: blue;
+        }
+      }
+    }
+  }
+
+  .ant-alert {
+    max-width: 450px;
+    margin-top: 8px;
+  }
+
+  .leave-alert {
+    .ant-alert {
+      border-radius: 0;
     }
 
-    &.vacation-paid {
-      color: green;
+    .ant-alert-error {
+      background-color: darken(#fff1f0, 5);
     }
+  }
 
-    &.vacation-unpaid {
-      color: orange;
-    }
-
-    &.vacation-sick {
-      color: plum;
-    }
-
-    &.vacation-wfh {
-      color: purple;
-    }
+  .calendar-event:not(:last-child) {
+    margin-bottom: 16px;
   }
 }
