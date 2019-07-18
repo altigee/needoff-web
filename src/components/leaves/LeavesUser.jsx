@@ -11,12 +11,13 @@ import InputForm from './../form/inputForm/InputForm';
 import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
-import { format } from './../utils/date';
+import { format, FORMATS } from './../utils/date';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
+const GAP = 14;
 
 const LeavesUser = () => {
   const [loading, setLoading] = useState(true);
@@ -28,19 +29,22 @@ const LeavesUser = () => {
   const [tab, setTab] = useState('pending');
   const [sortedInfo, setSortedInfo] = useState(null);
   const [filteredInfo, setFilteredInfo] = useState(null);
+  const [holidays, setHolidays] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
         const wsId = profileService.currentWs.id;
-        const [userBalance, vacations, users] = await Promise.all([
+        const [userBalance, vacations, users, holidays] = await Promise.all([
           profileService.getMyBalance(wsId),
           profileService.getVacationDays(wsId),
-          profileService.getWSMembers(wsId)
+          profileService.getWSMembers(wsId),
+          profileService.getHolidayData(wsId)
         ]);
         setUserBalance(userBalance.myBalance);
         setVacations(vacations.teamCalendar);
         setUsers(users.workspaceMembers);
+        setHolidays(holidays.workspaceDates);
       } catch (error) {
         sendNotification('error');
       }
@@ -180,6 +184,23 @@ const LeavesUser = () => {
     );
   }
 
+  function disabledDate(date) {
+    const currentDate = format(date, FORMATS.DEFAULT);
+    const userVacations = vacations.filter(date => {
+      return Number(profileService.user.userId) === date.userId;
+    });
+    return (
+      userVacations.some(day => {
+        return (
+          day.startDate === currentDate ||
+          (day.startDate < currentDate && day.endDate >= currentDate)
+        );
+      }) ||
+      date < moment().add(GAP, 'days') ||
+      holidays.some(day => day.date === currentDate)
+    );
+  }
+
   function createLeaveRequest() {
     const leaveTypes = [
       { key: '1', id: '1', name: 'Paid vacation' },
@@ -229,11 +250,19 @@ const LeavesUser = () => {
                   </div>
                   <div>
                     <label>First Date</label> <br />
-                    <Field name="startDate" component={DatePickerForm} />
+                    <Field
+                      disabledDate={disabledDate}
+                      name="startDate"
+                      component={DatePickerForm}
+                    />
                   </div>
                   <div>
                     <label>Last Date</label> <br />
-                    <Field name="endDate" component={DatePickerForm} />
+                    <Field
+                      name="endDate"
+                      component={DatePickerForm}
+                      disabledDate={disabledDate}
+                    />
                   </div>
                   <div>
                     <label>Comment</label>
