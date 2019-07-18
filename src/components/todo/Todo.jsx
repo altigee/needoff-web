@@ -14,16 +14,19 @@ const Todo = props => {
   const [loading, setLoading] = useState(true);
   const [approvalDaysOff, setApprovalDayOff] = useState(null);
   const [users, setUsers] = useState(null);
+  const [vacations, setVacations] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const [approvalDaysOff, users] = await Promise.all([
+        const [approvalDaysOff, users, vacations] = await Promise.all([
           profileService.getDaysOffForApproval(profileService.currentWs.id),
-          profileService.getWSMembers(profileService.currentWs.id)
+          profileService.getWSMembers(profileService.currentWs.id),
+          profileService.getVacationDays(profileService.currentWs.id)
         ]);
         setUsers(users.workspaceMembers);
         setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
+        setVacations(vacations.teamCalendar);
       } catch (error) {
         sendNotification('error');
       }
@@ -36,6 +39,28 @@ const Todo = props => {
   };
 
   const approveDayOffRequest = async record => {
+    const currentUser = find(users, { profile: { email: record.email } });
+    const dataApproved = vacations
+      .filter(item => item.userId === Number(currentUser.userId))
+      .map(item => ({
+        startDate: item.startDate,
+        endDate: item.endDate
+      }));
+    const startDate = record.startDate;
+    const endDate = record.endDate;
+    const busy = dataApproved.some(
+      day =>
+        (startDate >= day.startDate) & (startDate <= day.endDate) ||
+        (endDate >= day.startDate) & (endDate <= day.endDate) ||
+        (startDate < day.startDate) & (endDate > day.endDate)
+    );
+    if (busy) {
+      Modal.error({
+        title: 'Error',
+        content: 'User already has Leave day in that period'
+      });
+      return;
+    }
     const isEnoughDays = async () => {
       const user = find(users, { profile: { email: record.email } });
       const userBalance = await profileService.balanceByUser(
@@ -47,7 +72,10 @@ const Todo = props => {
         leftUnpaidLeaves,
         leftSickLeaves
       } = userBalance.balanceByUser;
-      const leavePeriod = moment(record.endDate) - moment(record.startDate) + 1;
+      const leavePeriod =
+        (moment(record.endDate) - moment(record.startDate)) /
+          (3600 * 24 * 1000) +
+        1;
       let balance;
       switch (record.leaveType) {
         case 'VACATION_PAID':
@@ -64,7 +92,7 @@ const Todo = props => {
     if (!(await isEnoughDays())) {
       Modal.error({
         title: 'Error',
-        content: `User doesn't have enough days for this leave request`
+        content: `User doesn't have enough days for this request`
       });
     } else {
       Modal.confirm({
@@ -78,6 +106,8 @@ const Todo = props => {
                 profileService.currentWs.id
               );
               setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
+              profileService.getVacationDays(profileService.currentWs.id);
+              setVacations(vacations.teamCalendar);
               props.setCount(approvalDaysOff.dayOffsForApproval.length);
             } catch (error) {
               sendNotification('error');
