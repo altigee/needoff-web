@@ -11,7 +11,7 @@ import InputForm from './../form/inputForm/InputForm';
 import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
-import { VACATIONS } from './../utils/constants';
+import { VACATIONS } from './../utils/vacations';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
