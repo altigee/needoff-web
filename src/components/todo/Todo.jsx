@@ -5,7 +5,7 @@ import { Button, Table, Modal, Divider } from 'antd';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
 import Loading from './../loading/Loading';
-import { VACATIONS } from './../utils/constants';
+import { VACATIONS } from './../utils/vacations';
 
 import './styles.scss';
 import 'antd/dist/antd.css';

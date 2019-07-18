@@ -18,7 +18,7 @@ import sendNotification from './../../notifications/notifications';
 import profileService from './../../../services/profileService/profileService';
 import { format } from './../../utils/date';
 import Loading from './../../loading/Loading';
-import { VACATIONS } from './../../utils/constants';
+import { VACATIONS } from './../../utils/vacations';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
