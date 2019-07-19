@@ -34,7 +34,6 @@ class AuthService {
     }`;
     const decodeToken = jwtDecode(localStorage.getItem('token')).exp * 1000;
     const timeLeft = decodeToken - Date.now();
-    console.log(timeLeft / 1000);
     if (timeLeft <= 0) {
       try {
         const response = await request(endpoint, mutation);
