@@ -14,6 +14,7 @@ export default class Routes extends Component {
   }
 
   renderAuthedRoutes = () => {
+    authService.refreshTokenMock();
     return (
       <Switch>
         <Route path={ROOT_ROUTES.MAIN} component={MainMenu} />

@@ -14,7 +14,6 @@ import Profile from './../profile/Profile';
 import Leaves from './../leaves/Leaves';
 import Todo from './../todo/Todo';
 import sendNotification from './../notifications/notifications';
-import refreshToken from './../../services/refreshToken';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
@@ -78,14 +77,6 @@ const MainMenu = () => {
 
   const setWsId = wsId => setCurrentWsId(wsId);
   const setCountRequests = count => setCount(count);
-  // --begin Mock refresh token
-  const data = {
-    login: 'o99@alt.com',
-    password: 'ssssss'
-  };
-  refreshToken(data);
-  // --end
-
   if (loading) return <Loading />;
   const currentWs = localStorage.getItem('currentWs');
   return (
