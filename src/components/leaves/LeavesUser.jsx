@@ -62,16 +62,23 @@ const LeavesUser = () => {
       }));
     const startDate = format(data.startDate);
     const endDate = format(data.endDate);
-    const busy = dataApproved.some(
-      day =>
-        (startDate >= day.startDate) & (startDate <= day.endDate) ||
-        (endDate >= day.startDate) & (endDate <= day.endDate) ||
-        (startDate < day.startDate) & (endDate > day.endDate)
+    const busyVacation = dataApproved.some(
+      day => (startDate < day.startDate) & (endDate > day.endDate)
     );
-    if (busy) {
+    const busyHoliday = holidays.some(
+      day => (startDate < day.date) & (endDate > day.date)
+    );
+    if (busyVacation) {
       Modal.error({
         title: 'Error',
-        content: 'You already have Leave day in that period'
+        content: 'You already have vacation day in that period'
+      });
+      return;
+    }
+    if (busyHoliday) {
+      Modal.error({
+        title: 'Error',
+        content: 'You request has a holiday. Please change your vacation date.'
       });
       return;
     }
