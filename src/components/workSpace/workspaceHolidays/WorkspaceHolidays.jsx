@@ -10,6 +10,7 @@ import CheckboxForm from './../../form/checkboxForm/CheckboxFom';
 import InputForm from './../../form/inputForm/InputForm';
 import sendNotification from './../../notifications/notifications';
 import Loading from './../../loading/Loading';
+import { format, FORMATS } from './../../utils/date';
 
 import './../styles.scss';
 import 'antd/dist/antd.css';
@@ -142,7 +143,15 @@ const WorkspaceHolidays = () => {
                   </div>
                   <div>
                     <label>Enter Date</label> <br />
-                    <Field name="date" component={DatePickerForm} />
+                    <Field
+                      name="date"
+                      component={DatePickerForm}
+                      disabledDate={date =>
+                        holidays.some(
+                          day => day.date === format(date, FORMATS.DEFAULT)
+                        )
+                      }
+                    />
                   </div>
                   <br />
                   <div>

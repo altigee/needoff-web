@@ -252,9 +252,9 @@ const LeavesUser = () => {
                   <div>
                     <label>First Date</label> <br />
                     <Field
-                      disabledDate={disabledDate}
                       name="startDate"
                       component={DatePickerForm}
+                      disabledDate={disabledDate}
                     />
                   </div>
                   <div>
