@@ -18,7 +18,7 @@ import './styles.scss';
 import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
-const GAP = 14;
+const minDaysBeforeRequest = 14;
 
 const LeavesUser = () => {
   const [loading, setLoading] = useState(true);
@@ -54,7 +54,7 @@ const LeavesUser = () => {
   }, []);
 
   const onSubmitCreateLeaves = async data => {
-    const dataApproved = vacations
+    const vacationApproved = vacations
       .filter(item => item.userId === Number(profileService.user.userId))
       .map(item => ({
         startDate: item.startDate,
@@ -62,11 +62,11 @@ const LeavesUser = () => {
       }));
     const startDate = format(data.startDate);
     const endDate = format(data.endDate);
-    const busyVacation = dataApproved.some(
-      day => (startDate < day.startDate) & (endDate > day.endDate)
+    const busyVacation = vacationApproved.some(
+      day => startDate < day.startDate && endDate > day.endDate
     );
     const busyHoliday = holidays.some(
-      day => (startDate < day.date) & (endDate > day.date)
+      day => startDate < day.date && endDate > day.date
     );
     if (busyVacation) {
       Modal.error({
@@ -194,18 +194,15 @@ const LeavesUser = () => {
 
   function disabledDate(date) {
     const currentDate = format(date, FORMATS.DEFAULT);
-    const userVacations = vacations.filter(date => {
-      return Number(profileService.user.userId) === date.userId;
-    });
+    const userVacations = vacations.filter(
+      date => Number(profileService.user.userId) === date.userId
+    );
     return (
       userVacations.some(day => {
-        return (
-          day.startDate === currentDate ||
-          (day.startDate < currentDate && day.endDate >= currentDate)
-        );
+        return day.startDate <= currentDate && day.endDate >= currentDate;
       }) ||
-      date < moment().add(GAP, 'days') ||
-      holidays.some(day => day.date === currentDate)
+      date < moment().add(minDaysBeforeRequest, 'days') ||
+      holidays.some(day => day.date === currentDate && day.isOfficialHoliday)
     );
   }
 

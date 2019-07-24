@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { get } from 'lodash';
+import { get, assign } from 'lodash';
 import { Table } from 'antd';
 import moment from 'moment';
 import Loading from './../loading/Loading';
@@ -13,9 +13,9 @@ import 'antd/dist/antd.css';
 const LeavesTeam = () => {
   const [loading, setLoading] = useState(true);
   const [vacations, setVacations] = useState(null);
-  const [users, setUsers] = useState(null);
   const [sortedInfo, setSortedInfo] = useState(null);
   const [filteredInfo, setFilteredInfo] = useState(null);
+  const [balance, setBalance] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -26,7 +26,23 @@ const LeavesTeam = () => {
           profileService.getWSMembers(wsId)
         ]);
         setVacations(vacations.teamCalendar);
-        setUsers(users.workspaceMembers);
+        let bal = [];
+        await Promise.all(
+          users.workspaceMembers.map(async user => {
+            const balanceUser = await profileService.balanceByUser(
+              profileService.currentWs.id,
+              user.userId
+            );
+            const balanceUserFull = assign(balanceUser.balanceByUser, {
+              id: user.userId,
+              key: user.userId,
+              email: user.profile.email,
+              name: `${user.profile.firstName} ${user.profile.lastName}`
+            });
+            bal.push(balanceUserFull);
+          })
+        );
+        setBalance(bal);
       } catch (error) {
         sendNotification('error');
       }
@@ -41,12 +57,6 @@ const LeavesTeam = () => {
 
   if (loading) return <Loading />;
 
-  const data = users.map(item => ({
-    id: item.userId,
-    key: item.userId,
-    email: item.profile.email,
-    name: `${item.profile.firstName} ${item.profile.lastName}`
-  }));
   const columns = [
     {
       title: 'Name',
@@ -57,16 +67,33 @@ const LeavesTeam = () => {
       title: 'Email',
       dataIndex: 'email',
       key: 'email'
+    },
+    {
+      title: 'Paid',
+      dataIndex: 'leftPaidLeaves',
+      key: 'leftPaidLeaves'
+    },
+    {
+      title: 'Unpaid',
+      dataIndex: 'leftUnpaidLeaves',
+      key: 'leftUnpaidLeaves'
+    },
+    {
+      title: 'Sick Leave',
+      dataIndex: 'leftSickLeaves',
+      key: 'leftSickLeaves'
     }
   ];
+
   return (
     <div className="nd-leaves-tab-team">
       <div className="nd-table nd-table-leaves-team">
         <Table
           size="small"
-          dataSource={data}
+          dataSource={balance}
           columns={columns}
           pagination={false}
+          expandRowByClick={true}
           expandedRowRender={userLeaves}
         />
       </div>
@@ -83,7 +110,7 @@ const LeavesTeam = () => {
         case VACATIONS.UNPAID:
           type = 'Unpaid vacation';
           break;
-        case VACATIONS.LEAVE:
+        case VACATIONS.SICK:
           type = 'Sick leave';
           break;
         default:
@@ -109,7 +136,6 @@ const LeavesTeam = () => {
         leaveType: item.leaveType,
         comment: item.comment
       }));
-
     const columns = [
       {
         title: 'Start Date',
@@ -139,6 +165,7 @@ const LeavesTeam = () => {
         render: renderLeaveType
       }
     ];
+
     return (
       <div className="nd-table inner-table">
         <Table

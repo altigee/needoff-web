@@ -24,9 +24,11 @@ const Leaves = () => {
         <TabPane tab="Personal" key="userLeaves">
           {activeTab === 'userLeaves' && <LeavesUser />}
         </TabPane>
-        <TabPane tab={profileService.currentWs.name} key="teamLeaves">
-          {activeTab === 'teamLeaves' && <LeavesTeam />}
-        </TabPane>
+        {profileService.isAdmin && (
+          <TabPane tab={profileService.currentWs.name} key="teamLeaves">
+            {activeTab === 'teamLeaves' && <LeavesTeam />}
+          </TabPane>
+        )}
       </Tabs>
     </div>
   );
