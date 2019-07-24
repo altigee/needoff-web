@@ -51,9 +51,9 @@ const Todo = props => {
     const endDate = record.endDate;
     const busy = dataApproved.some(
       day =>
-        (startDate >= day.startDate) & (startDate <= day.endDate) ||
-        (endDate >= day.startDate) & (endDate <= day.endDate) ||
-        (startDate < day.startDate) & (endDate > day.endDate)
+        (startDate >= day.startDate && startDate <= day.endDate) ||
+        (endDate >= day.startDate && endDate <= day.endDate) ||
+        (startDate < day.startDate && endDate > day.endDate)
     );
     if (busy) {
       Modal.error({
@@ -79,7 +79,9 @@ const Todo = props => {
                 profileService.currentWs.id
               );
               setApprovalDayOff(approvalDaysOff.dayOffsForApproval);
-              profileService.getVacationDays(profileService.currentWs.id);
+              const vacations = await profileService.getVacationDays(
+                profileService.currentWs.id
+              );
               setVacations(vacations.teamCalendar);
               props.setCount(approvalDaysOff.dayOffsForApproval.length);
             } catch (error) {

@@ -1,4 +1,4 @@
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 import { format } from './../../components/utils/date';
 
 export const endpoint = 'http://localhost:3344/graphql';
@@ -22,6 +22,10 @@ class profileService {
 
   get myWorkspaces() {
     return this.workspaces;
+  }
+
+  get isAdmin() {
+    return this.user.userId === get(this.owner, 'userId');
   }
 
   get currentWs() {
