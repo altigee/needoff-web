@@ -1,4 +1,5 @@
 import { request } from 'graphql-request';
+import jwtDecode from 'jwt-decode';
 import history from './../../components/router/history';
 import profileService from './../profileService/profileService';
 import AUTH_ROUTES from './../../components/auth/auth.routes';
@@ -21,6 +22,25 @@ class AuthService {
       history.push(MAIN_ROUTES.WORKSPACES);
     } catch (error) {
       history.push(AUTH_ROUTES.LOGIN);
+    }
+  };
+
+  refreshTokenMock = async () => {
+    const mutation = `mutation {
+      login(email: "o99@alt.com", password:"ssssss") {
+        accessToken
+        refreshToken
+      }
+    }`;
+    const decodeToken = jwtDecode(localStorage.getItem('token')).exp * 1000;
+    const timeLeft = decodeToken - Date.now();
+    if (timeLeft <= 0) {
+      try {
+        const response = await request(endpoint, mutation);
+        localStorage.setItem('token', response.login.accessToken);
+      } catch (error) {
+        this.logout();
+      }
     }
   };
 

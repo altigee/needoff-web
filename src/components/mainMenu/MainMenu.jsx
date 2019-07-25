@@ -77,7 +77,6 @@ const MainMenu = () => {
 
   const setWsId = wsId => setCurrentWsId(wsId);
   const setCountRequests = count => setCount(count);
-
   if (loading) return <Loading />;
   const currentWs = localStorage.getItem('currentWs');
   return (
