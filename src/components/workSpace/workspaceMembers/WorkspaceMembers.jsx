@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { assign, find } from 'lodash';
+import { find } from 'lodash';
 import { Form, Field } from 'react-final-form';
 import createDecorator from 'final-form-focus';
 import {
@@ -118,6 +118,13 @@ const WorkspaceMembers = () => {
   };
 
   const removeUser = async user => {
+    if (user.userId === profileService.owner.userId) {
+      Modal.error({
+        title: 'Error',
+        content: `You can't delete the workspace owner`
+      });
+      return;
+    }
     Modal.confirm({
       title: 'Do you want to delete a user?',
       icon: 'check-circle',
@@ -288,19 +295,14 @@ const WorkspaceMembers = () => {
       .filter(
         item => item.userId === Number(userById) && item.leaveType === leaveType
       )
-      .map(item =>
-        assign(
-          {},
-          {
-            id: item.id,
-            key: item.id,
-            startDate: item.startDate,
-            endDate: item.endDate,
-            leaveType: item.leaveType,
-            comment: item.comment
-          }
-        )
-      );
+      .map(item => ({
+        id: item.id,
+        key: item.id,
+        startDate: item.startDate,
+        endDate: item.endDate,
+        leaveType: item.leaveType,
+        comment: item.comment
+      }));
     const columns = [
       {
         title: 'Start Date',

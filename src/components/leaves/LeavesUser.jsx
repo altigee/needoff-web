@@ -11,12 +11,14 @@ import InputForm from './../form/inputForm/InputForm';
 import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import sendNotification from './../notifications/notifications';
+import { format, FORMATS } from './../utils/date';
 import { VACATIONS } from './../utils/vacations';
 
 import './styles.scss';
 import 'antd/dist/antd.css';
 
 const focusOnError = createDecorator();
+const minDaysBeforeRequest = 14;
 
 const LeavesUser = () => {
   const [loading, setLoading] = useState(true);
@@ -28,19 +30,22 @@ const LeavesUser = () => {
   const [tab, setTab] = useState('pending');
   const [sortedInfo, setSortedInfo] = useState(null);
   const [filteredInfo, setFilteredInfo] = useState(null);
+  const [holidays, setHolidays] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
         const wsId = profileService.currentWs.id;
-        const [userBalance, vacations, users] = await Promise.all([
+        const [userBalance, vacations, users, holidays] = await Promise.all([
           profileService.getMyBalance(wsId),
           profileService.getVacationDays(wsId),
-          profileService.getWSMembers(wsId)
+          profileService.getWSMembers(wsId),
+          profileService.getHolidayData(wsId)
         ]);
         setUserBalance(userBalance.myBalance);
         setVacations(vacations.teamCalendar);
         setUsers(users.workspaceMembers);
+        setHolidays(holidays.workspaceDates);
       } catch (error) {
         sendNotification('error');
       }
@@ -49,7 +54,34 @@ const LeavesUser = () => {
   }, []);
 
   const onSubmitCreateLeaves = async data => {
-    setLoading(true);
+    const vacationApproved = vacations
+      .filter(item => item.userId === Number(profileService.user.userId))
+      .map(item => ({
+        startDate: item.startDate,
+        endDate: item.endDate
+      }));
+    const startDate = format(data.startDate);
+    const endDate = format(data.endDate);
+    const busyVacation = vacationApproved.some(
+      day => startDate < day.startDate && endDate > day.endDate
+    );
+    const busyHoliday = holidays.some(
+      day => startDate < day.date && endDate > day.date
+    );
+    if (busyVacation) {
+      Modal.error({
+        title: 'Error',
+        content: 'You already have vacation day in that period'
+      });
+      return;
+    }
+    if (busyHoliday) {
+      Modal.error({
+        title: 'Error',
+        content: 'You request has a holiday. Please change your vacation date.'
+      });
+      return;
+    }
     let type;
     switch (data.type) {
       case 'Paid vacation':
@@ -64,12 +96,22 @@ const LeavesUser = () => {
       default:
         type = VACATIONS.WFH;
     }
+    setLoading(true);
     try {
-      await profileService.createDayOff(
+      const response = await profileService.createDayOff(
         data,
         type,
         profileService.currentWs.id
       );
+      if (response.createDayOff.errors.length) {
+        Modal.error({
+          title: 'Error',
+          content: response.createDayOff.errors[0]
+        });
+        setLoading(false);
+        setVisibleCreateRequest(false);
+        return;
+      }
       const [userBalance, vacations] = await Promise.all([
         profileService.getMyBalance(profileService.currentWs.id),
         profileService.getVacationDays(profileService.currentWs.id)
@@ -150,6 +192,20 @@ const LeavesUser = () => {
     );
   }
 
+  function disabledDate(date) {
+    const currentDate = format(date, FORMATS.DEFAULT);
+    const userVacations = vacations.filter(
+      date => Number(profileService.user.userId) === date.userId
+    );
+    return (
+      userVacations.some(day => {
+        return day.startDate <= currentDate && day.endDate >= currentDate;
+      }) ||
+      date < moment().add(minDaysBeforeRequest, 'days') ||
+      holidays.some(day => day.date === currentDate && day.isOfficialHoliday)
+    );
+  }
+
   function createLeaveRequest() {
     const leaveTypes = [
       { key: '1', id: '1', name: 'Paid vacation' },
@@ -199,11 +255,19 @@ const LeavesUser = () => {
                   </div>
                   <div>
                     <label>First Date</label> <br />
-                    <Field name="startDate" component={DatePickerForm} />
+                    <Field
+                      name="startDate"
+                      component={DatePickerForm}
+                      disabledDate={disabledDate}
+                    />
                   </div>
                   <div>
                     <label>Last Date</label> <br />
-                    <Field name="endDate" component={DatePickerForm} />
+                    <Field
+                      name="endDate"
+                      component={DatePickerForm}
+                      disabledDate={disabledDate}
+                    />
                   </div>
                   <div>
                     <label>Comment</label>

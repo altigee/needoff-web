@@ -24,7 +24,6 @@ const MainMenu = () => {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(null);
   const [currentWsId, setCurrentWsId] = useState(null);
-  const [ownerWs, setOwnerWs] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -59,9 +58,8 @@ const MainMenu = () => {
   useEffect(() => {
     (async () => {
       if (currentWsId && currentUser) {
-        const owner = await profileService.getWsOwner(currentWsId);
-        setOwnerWs(owner);
-        if (get(owner, 'userId') === get(currentUser, 'userId')) {
+        await profileService.getWsOwner(currentWsId);
+        if (profileService.isAdmin) {
           try {
             const approvalDaysOff = await profileService.getDaysOffForApproval(
               currentWsId
@@ -126,7 +124,7 @@ const MainMenu = () => {
               </span>
             </Menu.Item>
             <Menu.Item key="6" disabled={!currentWsId}>
-              {get(ownerWs, 'userId') === currentUser.userId && (
+              {profileService.isAdmin && (
                 <Badge count={count}>
                   <Icon type="file" />
                   <span className="nd-main-menu-sider-item">

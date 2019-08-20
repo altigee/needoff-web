@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarAntd, Alert } from 'antd';
+import { find } from 'lodash';
+import { Calendar as CalendarAntd, Alert, Modal, Button } from 'antd';
 import Loading from './../loading/Loading';
 import profileService from './../../services/profileService/profileService';
 import { format, FORMATS } from './../utils/date';
@@ -13,16 +14,21 @@ const Calendar = () => {
   const [listHolidays, setListHolidays] = useState(null);
   const [vacations, setVacations] = useState(null);
   const [listVacations, setListVacations] = useState(null);
+  const [visibleDetailsInfo, setVisibleDetailsInfo] = useState(null);
+  const [currentVacation, setCurrentVacation] = useState(null);
+  const [users, setUsers] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const [holidays, vacations] = await Promise.all([
+        const [holidays, vacations, users] = await Promise.all([
           profileService.getHolidayData(profileService.currentWs.id),
-          profileService.getVacationDays(profileService.currentWs.id)
+          profileService.getVacationDays(profileService.currentWs.id),
+          profileService.getWSMembers(profileService.currentWs.id)
         ]);
         setHolidays(holidays.workspaceDates);
         setVacations(vacations.teamCalendar);
+        setUsers(users.workspaceMembers);
       } catch (error) {
         sendNotification('error');
       }
@@ -36,13 +42,7 @@ const Calendar = () => {
     const ldata = holidays.filter(day => day.date === cellDate);
     setListHolidays(ldata);
     const vacdata = vacations.filter(day => {
-      if (day.startDate === cellDate) {
-        return day;
-      }
-      if (
-        day.startDate < cellDate &&
-        (day.endDate > cellDate || day.endDate === cellDate)
-      ) {
+      if (day.startDate <= cellDate && day.endDate >= cellDate) {
         return day;
       }
       return false;
@@ -55,11 +55,7 @@ const Calendar = () => {
     const ldata = holidays.filter(day => day.date === cellDate);
     let paid, sick, unpaid, wfh;
     const vacdata = vacations.filter(day => {
-      if (
-        day.startDate === cellDate ||
-        (day.startDate < cellDate &&
-          (day.endDate > cellDate || day.endDate === cellDate))
-      ) {
+      if (day.startDate <= cellDate && day.endDate >= cellDate) {
         if (day.leaveType === 'VACATION_PAID') paid = true;
         if (day.leaveType === 'VACATION_UNPAID') unpaid = true;
         if (day.leaveType === 'SICK_LEAVE') sick = true;
@@ -84,7 +80,7 @@ const Calendar = () => {
 
   const showHolidaysEvents = () => {
     return (
-      <>
+      <div className="holiday-alert">
         <ul>
           {listHolidays.map(item => (
             <li key={item.id} className="calendar-event">
@@ -97,7 +93,7 @@ const Calendar = () => {
             </li>
           ))}
         </ul>
-      </>
+      </div>
     );
   };
 
@@ -126,21 +122,20 @@ const Calendar = () => {
                   type = 'WFH';
                 }
                 return (
-                  <li key={item.id} className="calendar-event">
-                    <u>
-                      <strong>
-                        {item.user.firstName} {item.user.lastName}
-                      </strong>
-                    </u>
+                  <li
+                    key={item.id}
+                    className="calendar-event"
+                    onClick={() => {
+                      setCurrentVacation(item);
+                      setVisibleDetailsInfo(true);
+                    }}
+                  >
+                    <strong>
+                      {item.user.firstName} {item.user.lastName}
+                    </strong>
                     <br />
                     <span>Type: {type}</span>
                     <br />
-                    <i>
-                      {format(item.startDate, FORMATS.SECONDARY)} -{' '}
-                      {format(item.endDate, FORMATS.SECONDARY)}
-                    </i>
-                    <br />
-                    <span>Comment: {item.comment}</span>
                   </li>
                 );
               })}
@@ -184,8 +179,51 @@ const Calendar = () => {
         <Alert type={'error'} message={showHolidaysEvents()} />
       )}
       {selectedValue && !!listVacations.length && showLeavesEvents()}
+      {visibleDetailsInfo && showDetailsInfo()}
     </div>
   );
+
+  function showDetailsInfo() {
+    const approvePerson = find(users, {
+      userId: String(currentVacation.approvedById)
+    });
+    return (
+      <Modal
+        visible={visibleDetailsInfo}
+        footer={null}
+        closable={false}
+        className="details-info-modal"
+      >
+        <div className="details-vacation">
+          <div className="details-vacation-info">
+            <span>
+              Period:
+              <span className="details-data">
+                {` ${format(currentVacation.startDate, FORMATS.SECONDARY)} -
+                  ${format(currentVacation.endDate, FORMATS.SECONDARY)}`}
+              </span>
+            </span>
+            <br />
+            <span>
+              Comment:{' '}
+              <span className="details-data">{currentVacation.comment}</span>
+            </span>
+            <br />
+            <span>
+              {` Approved by: `}
+              <span className="details-data">
+                {`${approvePerson.profile.firstName} 
+                ${approvePerson.profile.lastName} `}
+              </span>
+            </span>
+          </div>
+          <Button type="primary" onClick={() => setVisibleDetailsInfo(false)}>
+            Cancel
+          </Button>
+        </div>
+      </Modal>
+    );
+  }
 };
 
 export default Calendar;
